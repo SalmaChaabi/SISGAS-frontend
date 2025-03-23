@@ -1,12 +1,12 @@
 import React from 'react';
 import { TextField, Typography, Button, Paper } from '@mui/material';
 import Stack from '@mui/material/Stack';
-import { addUserAdmin } from '../services/users/addUserAdmin';
+import { addUserAdmin } from '../../../services/users/addUserAdmin';
 
-type SignUpProps = {
+type  UserFormProps = {
     onSubmit: (user: any) => void
 }
-const Signup = ({ onSubmit }: SignUpProps) => {
+const UserForm = ({ onSubmit }: UserFormProps) => {
     const [firstName, setFirstName] = React.useState('');
     const [lastName, setLastName] = React.useState('');
     const [adresse, setAdresse] = React.useState('');
@@ -48,7 +48,6 @@ const Signup = ({ onSubmit }: SignUpProps) => {
     };
 
     return (
-        <Paper sx={{ padding: 3, maxWidth: 400, margin: 'auto', marginTop: 5 }}>
             <Stack spacing={2}>
                 <TextField
                     label="FirstName"
@@ -92,8 +91,8 @@ const Signup = ({ onSubmit }: SignUpProps) => {
                 </Button>
                 {response && <Typography color={response.success ? 'success' : "error"}>{response.message}</Typography>}
             </Stack>
-        </Paper>
+        
     );
 };
 
-export default Signup;
+export default UserForm;
