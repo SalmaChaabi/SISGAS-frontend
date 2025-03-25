@@ -1,30 +1,31 @@
-import React, { useEffect } from "react";
-import { TextField, Typography, Button, Paper } from "@mui/material";
+import { Button, TextField, Typography } from "@mui/material";
 import Stack from "@mui/material/Stack";
-import { addUserAdmin } from "../../../services/users/addUserAdmin";
+import React, { useEffect } from "react";
 import { User } from "../../../services/users/getAllUsers";
+import {
+  AddUserAdminType,
+  AddUserAdminTypeResponse,
+} from "../../../services/users/addUserAdmin";
 
 type UserFormProps = {
-  onSubmit: (user: any) => Promise<any>;
+  onSubmit: (user: AddUserAdminType) => Promise<AddUserAdminTypeResponse>;
   defaultData?: User;
-  submitLabel?:string;
+  submitLabel?: string;
 };
-const UserForm = ({ onSubmit, defaultData ,submitLabel  }: UserFormProps) => {
+const UserForm = ({ onSubmit, defaultData, submitLabel }: UserFormProps) => {
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
-  const [adresse, setAdresse] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [error, setError] = React.useState(false);
-  const [userData, setUserdata] = React.useState(false);
 
-  const [response, setResponse] = React.useState(null);
+  const [response, setResponse] =
+    React.useState<AddUserAdminTypeResponse | null>(null);
   // Vérification des entrées
   const firstNameError =
     firstName.length < 2 ? "Le prénom doit avoir au moins 2 caractères" : "";
   const lastNameError =
     lastName.length < 2 ? "Le nom doit avoir au moins 2 caractères" : "";
-  const adresseError = adresse.length < 6 ? "Adresse invalide" : "";
   const emailError = email.includes("@")
     ? ""
     : "Email invalide (doit contenir @)";
@@ -36,9 +37,8 @@ const UserForm = ({ onSubmit, defaultData ,submitLabel  }: UserFormProps) => {
   const isFormError =
     firstNameError ||
     lastNameError ||
-    adresseError ||
     emailError ||
-    passwordError;
+    (passwordError && defaultData == undefined);
 
   const handleSubmit = async () => {
     if (isFormError) {
@@ -54,7 +54,6 @@ const UserForm = ({ onSubmit, defaultData ,submitLabel  }: UserFormProps) => {
           password,
         });
         setResponse(res);
-    
       } catch (error) {
         console.error("Erreur lors de l’ajout de l’utilisateur", error);
         setError(true);
@@ -94,13 +93,7 @@ const UserForm = ({ onSubmit, defaultData ,submitLabel  }: UserFormProps) => {
         helperText={lastNameError}
         error={!!lastNameError}
       />
-      <TextField
-        label="Adress"
-        value={adresse}
-        onChange={(e) => setAdresse(e.target.value)}
-        helperText={adresseError}
-        error={!!adresseError}
-      />
+
       <TextField
         label="Email"
         type="email"
@@ -120,8 +113,7 @@ const UserForm = ({ onSubmit, defaultData ,submitLabel  }: UserFormProps) => {
         />
       )}
       <Button variant="contained" type="submit" onClick={handleSubmit}>
-         {submitLabel ?? 'submit'}
- 
+        {submitLabel ?? "submit"}
       </Button>
       {response && (
         <Typography color={response.success ? "success" : "error"}>

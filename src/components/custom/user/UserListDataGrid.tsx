@@ -1,20 +1,23 @@
-import { Avatar, Dialog, DialogContent } from "@mui/material";
+import { Avatar } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { AddUserAdminType } from "../../../services/users/addUserAdmin";
 import { deleteUser } from "../../../services/users/deleteUser";
 import UserItemActions from "./UserItemActions";
-import UserForm from "./UserForm";
-import { useState } from "react";
 
 type UserListProps = {
   data: any;
   onDelete: (id: string) => void;
+  onUpdate: (
+    userId: string,
+    user: AddUserAdminType
+  ) => Promise<{
+    success: boolean;
+    message: string;
+    data: any;
+  }>;
 };
 
-//const handleDelete = (id: string) => {
-// setUsers(prev => prev.filter(user => user._id !== id));
-//};
-const UserList = ({ data, onDelete }: UserListProps) => {
-
+const UserList = ({ data, onDelete, onUpdate }: UserListProps) => {
   const columns: GridColDef[] = [
     { field: "firstName", headerName: "FirstName", width: 150 },
     { field: "lastName", headerName: "LastName", width: 150 },
@@ -42,20 +45,15 @@ const UserList = ({ data, onDelete }: UserListProps) => {
         return (
           <UserItemActions
             onDelete={handleDelete}
-            onUpdate={() => {}}
-            userId={params.id}
+            onUpdate={onUpdate}
+            userId={params.id.toString()}
           />
         );
       },
     },
   ];
 
-  return (
-    <DataGrid
-      rows={data.map(({ _id, ...item }: any) => ({ ...item, id: _id }))}
-      columns={columns}
-    />
-  );
+  return <DataGrid rows={data} columns={columns} getRowId={(row) => row._id} />;
 
   // return <Paper sx={{ maxHeight: '70%', overflow: 'auto' }} >
   //     <List >

@@ -1,18 +1,24 @@
-import * as React from "react";
-import Button from "@mui/material/Button";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { Dialog, DialogContent, IconButton } from "@mui/material";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { Dialog, DialogContent, IconButton } from "@mui/material";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import ConfirmationModal from "../../common/ConfirmationModal";
+import * as React from "react";
 import { useState } from "react";
-import UserForm from "./UserForm";
-import { getUserByID } from "../../../services/users/getUserbyId";
 import { User } from "../../../services/users/getAllUsers";
+import { getUserByID } from "../../../services/users/getUserbyId";
+import {
+  AddUserAdminType,
+  AddUserAdminTypeResponse,
+} from "../../../services/users/addUserAdmin";
+import ConfirmationModal from "../../common/ConfirmationModal";
+import UserForm from "./UserForm";
 
 type UserItemActionsProps = {
   onDelete: VoidFunction;
-  onUpdate: VoidFunction;
+  onUpdate: (
+    userId: string,
+    user: AddUserAdminType
+  ) => Promise<AddUserAdminTypeResponse>;
   userId: string;
 };
 export default function UserItemActions({
@@ -24,7 +30,7 @@ export default function UserItemActions({
   const open = Boolean(anchorEl);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
-  const [userData, setUserData] = useState<User>({});
+  const [userData, setUserData] = useState<User>({} as User);
 
   const handleClick = (event: any) => {
     setAnchorEl(event.currentTarget);
@@ -37,6 +43,7 @@ export default function UserItemActions({
     setDeleteModalOpen(false);
     handleClose();
   };
+
   React.useEffect(() => {
     if (updateModalOpen) {
       // fetch user da
@@ -89,7 +96,11 @@ export default function UserItemActions({
         }}
       >
         <DialogContent>
-          <UserForm onSubmit={() => {}} defaultData={userData} submitLabel="Update Users" />
+          <UserForm
+            onSubmit={(user) => onUpdate(userId, user)}
+            defaultData={userData}
+            submitLabel="Update Users"
+          />
         </DialogContent>
       </Dialog>
     </div>
