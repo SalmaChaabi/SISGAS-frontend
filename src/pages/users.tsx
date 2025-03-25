@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { getAllUsers } from '../services/users/getAllUsers'
 import UserList from '../components/custom/user/UserListDataGrid'
 import Signup from '../components/custom/user/UserForm'
+import { addUserAdmin } from '../services/users/addUserAdmin'
 
 const UsersPage = () => {
   // const { data } = useQuery({
@@ -13,6 +14,16 @@ const UsersPage = () => {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false)
 
   const [users, setUsers] = useState<any>([])
+  const addUser=async({firstName,lastName,email,password})=>{
+    const res = await addUserAdmin({
+              firstName,
+              lastName,
+              email,
+              password,
+            });
+            setUsers(((recentUsers: any) => [...recentUsers, res])) ;
+            return res 
+  }
   useEffect(() => {
     const fetchUsers = async () => {
       const response = await getAllUsers()
@@ -29,9 +40,9 @@ const UsersPage = () => {
         setUsers(((recentUsers: any) => recentUsers.filter((item: any) => item._id !== id)))
       }} />
       <Dialog onClose={() => setDialogOpen(false)} open={dialogOpen}>
-        <DialogTitle>new user</DialogTitle>
+        <DialogTitle>New User Account</DialogTitle>
         <DialogContent>
-          <Signup onSubmit={(user: any) => { setUsers(((recentUsers: any) => [...recentUsers, user])) }} />
+          <Signup onSubmit={addUser}/>
         </DialogContent>
       </Dialog>
     </Stack>

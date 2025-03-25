@@ -1,13 +1,36 @@
 import React from "react";
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
 
 type ConfirmationModalProps = {
-  onConfirm: VoidFunction;
-  onCancel: VoidFunction;
+  open: boolean;
+  onConfirm: () => void;
+  onCancel: () => void;
   message: string;
 };
-const ConfirmationModal = ({}:ConfirmationModalProps) => {
-    //implement a modal with a message as a ModalContent and two actions inside ModalActions (2 buttons)
-  return <div></div>;
+
+const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
+  open,
+  onConfirm,
+  onCancel,
+  message,
+}) => {
+  return (
+    <Dialog open={open} onClose={onCancel}>
+      <DialogTitle>Confirmation</DialogTitle>
+      <DialogContent>
+        <p>{message}</p>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onCancel} color="inherit">
+          Annuler
+        </Button>
+        <Button onClick={onConfirm} color="error" variant="contained">
+          Supprimer
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 };
 
 export default ConfirmationModal;
+

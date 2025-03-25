@@ -1,8 +1,9 @@
-import { Avatar } from "@mui/material";
+import { Avatar, Dialog, DialogContent } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { deleteUser } from "../../../services/users/deleteUser";
-
 import UserItemActions from "./UserItemActions";
+import UserForm from "./UserForm";
+import { useState } from "react";
 
 type UserListProps = {
   data: any;
@@ -13,6 +14,7 @@ type UserListProps = {
 // setUsers(prev => prev.filter(user => user._id !== id));
 //};
 const UserList = ({ data, onDelete }: UserListProps) => {
+
   const columns: GridColDef[] = [
     { field: "firstName", headerName: "FirstName", width: 150 },
     { field: "lastName", headerName: "LastName", width: 150 },
@@ -37,14 +39,20 @@ const UserList = ({ data, onDelete }: UserListProps) => {
             console.error("Failed to delete user", err);
           }
         };
-        return <UserItemActions onDelete={handleDelete} />;
+        return (
+          <UserItemActions
+            onDelete={handleDelete}
+            onUpdate={() => {}}
+            userId={params.id}
+          />
+        );
       },
     },
   ];
 
   return (
     <DataGrid
-      rows={data.map(({ _id, ...item }) => ({ ...item, id: _id }))}
+      rows={data.map(({ _id, ...item }: any) => ({ ...item, id: _id }))}
       columns={columns}
     />
   );
