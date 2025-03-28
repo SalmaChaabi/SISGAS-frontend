@@ -5,12 +5,14 @@ import { ReactRouterAppProvider } from "@toolpad/core/react-router";
 import * as React from "react";
 import { Outlet, useNavigate } from "react-router";
 import { SessionContext } from "./SessionContext";
+import { useLocalStorageState } from "@toolpad/core";
 const NAVIGATION: Navigation = [
   {
     kind: "header",
     title: "Main items",
   },
   {
+    segment: "overview",
     title: "Dashboard",
     icon: <DashboardIcon />,
   },
@@ -22,17 +24,29 @@ const NAVIGATION: Navigation = [
 ];
 
 const BRANDING = {
-  title: "My Toolpad Core App",
+  title: "SYSGAS",
 };
 
 export default function App() {
-  const [session, setSession] = React.useState<Session | null>(null);
+  const [session, setSessionState] = React.useState<Session | null>(null);
+  const [localStorageSession, setLocalStorageSession] = useLocalStorageState(
+    "session",
+    null
+  );
   const navigate = useNavigate();
 
   const signIn = React.useCallback(() => {
     navigate("/sign-in");
   }, [navigate]);
 
+  const setSession = (session: Session | null) => {
+    setSessionState(session);
+    if (session !== null) {
+      setLocalStorageSession(JSON.stringify(session));
+    } else {
+      setLocalStorageSession(null);
+    }
+  };
   const signOut = React.useCallback(() => {
     setSession(null);
     navigate("/sign-in");
@@ -43,6 +57,10 @@ export default function App() {
     [session, setSession]
   );
 
+  React.useEffect(() => {
+    if (localStorageSession) setSession(JSON.parse(localStorageSession));
+  }, [localStorageSession]);
+  console.log({ session });
   return (
     <SessionContext.Provider value={sessionContextValue}>
       <ReactRouterAppProvider
