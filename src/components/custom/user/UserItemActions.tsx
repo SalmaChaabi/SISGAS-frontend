@@ -78,7 +78,7 @@ export default function UserItemActions({
           Delete
         </MenuItem>
       </Menu>
-
+      {/* when we click delete, it opens a modal with yes or no choices */}
       <ConfirmationModal
         open={deleteModalOpen}
         onConfirm={handleConfirmDelete}
@@ -88,6 +88,7 @@ export default function UserItemActions({
         }}
         message="Êtes-vous sûr de vouloir supprimer cet utilisateur ?"
       />
+      {/* when we click update, it opens a modal with user form */}
       <Dialog
         open={updateModalOpen}
         onClose={() => {
