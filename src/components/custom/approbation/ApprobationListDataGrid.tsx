@@ -1,10 +1,12 @@
+import { useState } from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { AddUserAdminType } from "../../../services/users/addUserAdmin";
-import { deleteUser } from "../../../services/users/deleteUser";
 import { IconButton } from "@mui/material";
-import { Delete, Edit, Visibility } from "@mui/icons-material";
-import ApprobationItemActions from "./ApprobationItemActions";
+import { Visibility } from "@mui/icons-material";
 import { ApprobationType } from "../../../services/approbation";
+import ApprobationItemActions from "./ApprobationItemActions";
+import { getFactureByApprobationId } from "../../../services/facture/getFactureByApprobationId";
+import { FactureType } from "../../../services/facture/FactureType";
+import FactureModal from "../facture/FactureModal";
 
 type ApplicationDataGridProps = {
   data: any;
@@ -20,8 +22,17 @@ const ApplicationDataGrid = ({
   onDelete,
   onUpdate,
 }: ApplicationDataGridProps) => {
-  const handleOpenFacture = (facture: any) => {
-    console.log("Voir Facture:", facture);
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedFacture, setSelectedFacture] = useState<FactureType | null>(null);
+
+  const handleOpenFacture = async (approbationId: string) => {
+    try {
+      const facture = await getFactureByApprobationId(approbationId);
+      setSelectedFacture(facture);
+      setOpenModal(true);
+    } catch (error) {
+      console.error("Erreur lors du chargement de la facture", error);
+    }
   };
 
   const columns: GridColDef[] = [
@@ -37,7 +48,7 @@ const ApplicationDataGrid = ({
       width: 100,
       renderCell: (params) => (
         <IconButton
-          onClick={() => handleOpenFacture(params.value)}
+          onClick={() => handleOpenFacture(params.id.toString())}
           color="primary"
         >
           <Visibility />
@@ -49,17 +60,6 @@ const ApplicationDataGrid = ({
       headerName: "Actions",
       width: 150,
       renderCell: (params) => (
-        // <>
-        //   <IconButton onClick={() => handleEdit(params.row)} color="warning">
-        //     <Edit />
-        //   </IconButton>
-        //   <IconButton
-        //     onClick={() => onDelete(params.id.toString())}
-        //     color="error"
-        //   >
-        //     <Delete />
-        //   </IconButton>
-        // </>
         <ApprobationItemActions
           approbationId={params.id.toString()}
           onDelete={() => onDelete(params.id.toString())}
@@ -69,7 +69,18 @@ const ApplicationDataGrid = ({
     },
   ];
 
-  return <DataGrid rows={data} columns={columns} getRowId={(row) => row._id} />;
+  return (
+    <>
+      <DataGrid rows={data} columns={columns} getRowId={(row) => row._id} />
+      <FactureModal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        facture={selectedFacture}
+      />
+    </>
+  );
 };
 
 export default ApplicationDataGrid;
+
+

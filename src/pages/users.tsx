@@ -11,7 +11,7 @@ import { getAllUsers, User } from "../services/users/getAllUsers";
 import UserList from "../components/custom/user/UserListDataGrid";
 import Signup from "../components/custom/user/UserForm";
 import { addUserAdmin, AddUserAdminType } from "../services/users/addUserAdmin";
-import { updateUser } from "../services/users/UpdateUser";
+import { updateUser } from "../services/users/updateUser";
 
 const UsersPage = () => {
   // const { data } = useQuery({

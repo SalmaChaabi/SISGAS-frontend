@@ -1,4 +1,4 @@
-import { Button, TextField, Typography } from "@mui/material";
+import { Button, MenuItem, Select, TextField, Typography } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import React, { useEffect } from "react";
 import { User } from "../../../services/users/getAllUsers";
@@ -6,6 +6,7 @@ import {
   AddUserAdminType,
   AddUserAdminTypeResponse,
 } from "../../../services/users/addUserAdmin";
+import { getUserRoles } from "../../../services/users/getUserRoles";
 
 type UserFormProps = {
   onSubmit: (user: AddUserAdminType) => Promise<AddUserAdminTypeResponse>;
@@ -18,7 +19,13 @@ const UserForm = ({ onSubmit, defaultData, submitLabel }: UserFormProps) => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [error, setError] = React.useState(false);
-
+  const [selectRole, setSelectRole] = React.useState("");
+  const [roles, setRoles] = React.useState<
+    {
+      _id: string;
+      name: string;
+    }[]
+  >([]);
   const [response, setResponse] =
     React.useState<AddUserAdminTypeResponse | null>(null);
   // Vérification des entrées
@@ -62,6 +69,13 @@ const UserForm = ({ onSubmit, defaultData, submitLabel }: UserFormProps) => {
     }
   };
   useEffect(() => {
+    const fetchRoles = async () => {
+      const res = await getUserRoles();
+      setRoles(res);
+    };
+    fetchRoles();
+  }, []);
+  useEffect(() => {
     if (defaultData?.firstName) {
       setFirstName(defaultData.firstName);
     }
@@ -77,6 +91,7 @@ const UserForm = ({ onSubmit, defaultData, submitLabel }: UserFormProps) => {
       setEmail(defaultData.email);
     }
   }, [defaultData]);
+  console.log({ selectRole });
   return (
     <Stack spacing={2}>
       <TextField
@@ -112,6 +127,11 @@ const UserForm = ({ onSubmit, defaultData, submitLabel }: UserFormProps) => {
           error={!!passwordError}
         />
       )}
+      <Select onChange={(event) => setSelectRole(event.target.value as string)}>
+        {roles.map((role) => (
+          <MenuItem value={role._id}>{role.name}</MenuItem>
+        ))}
+      </Select>
       <Button variant="contained" type="submit" onClick={handleSubmit}>
         {submitLabel ?? "submit"}
       </Button>
