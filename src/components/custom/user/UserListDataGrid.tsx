@@ -1,6 +1,6 @@
 import { Avatar } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { AddUserAdminType } from "../../../services/users/addUserAdmin";
+import { AddUserParam } from "../../../services/users/addUser";
 import { deleteUser } from "../../../services/users/deleteUser";
 import UserItemActions from "./UserItemActions";
 
@@ -9,7 +9,7 @@ type UserListProps = {
   onDelete: (id: string) => void;
   onUpdate: (
     userId: string,
-    user: AddUserAdminType
+    user: AddUserParam
   ) => Promise<{
     success: boolean;
     message: string;

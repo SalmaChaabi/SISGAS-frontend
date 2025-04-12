@@ -1,4 +1,6 @@
-export const updateUser = async (userId: string, userData: any) => {
+import { AddUserParam, AddUserResponse } from "./addUser";
+
+export const updateUser = async (userId: string, userData: AddUserParam) => {
   const response = await fetch(
     `http://localhost:5001/auth/updateUser/${userId}`,
     {
@@ -15,8 +17,8 @@ export const updateUser = async (userId: string, userData: any) => {
   return {
     success: response.status === 200,
     message: data.message,
-    data: data.data,
-  };
+    data: data.user,
+  } as AddUserResponse;
   //   return {
   //     success: true,
   //     message: "User updated successfully",

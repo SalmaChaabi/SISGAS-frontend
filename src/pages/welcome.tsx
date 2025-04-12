@@ -69,7 +69,9 @@ const WelcomePage = () => {
       >
         <Container sx={{ position: "relative", zIndex: 2 }}>
           <Typography variant="h3" gutterBottom>
-            Bienvenue dans SYSGAS 👋
+          Bienvenue dans notre application 
+          <br/>
+          Maintenova 👋
           </Typography>
           <Typography variant="h6" gutterBottom>
             Système de gestion automatisé du spectre

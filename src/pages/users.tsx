@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { getAllUsers, User } from "../services/users/getAllUsers";
 import UserList from "../components/custom/user/UserListDataGrid";
 import Signup from "../components/custom/user/UserForm";
-import { addUserAdmin, AddUserAdminType } from "../services/users/addUserAdmin";
+import { addUser as addUserService, AddUserParam } from "../services/users/addUser";
 import { updateUser } from "../services/users/updateUser";
 
 const UsersPage = () => {
@@ -21,14 +21,14 @@ const UsersPage = () => {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
   const [users, setUsers] = useState<any>([]);
-  const addUser = async (user: AddUserAdminType) => {
-    const newUser = await addUserAdmin(user);
+  const addUser = async (user: AddUserParam) => {
+    const newUser = await addUserService(user);
     if (newUser.success) {
       setUsers((recentUsers: User[]) => [...recentUsers, newUser.data]);
     }
     return newUser;
   };
-  const handleUpdateUser = async (userId: string, user: AddUserAdminType) => {
+  const handleUpdateUser = async (userId: string, user: AddUserParam) => {
     const newUser = await updateUser(userId, user);
 
     if (newUser.success) {
@@ -59,7 +59,7 @@ const UsersPage = () => {
         onClick={() => setDialogOpen(true)}
         sx={{ alignSelf: "end" }}
       >
-        add new user
+        Create a User Account
       </Button>
       <UserList
         data={users}

@@ -3,13 +3,14 @@ import Stack from "@mui/material/Stack";
 import React, { useEffect } from "react";
 import { User } from "../../../services/users/getAllUsers";
 import {
-  AddUserAdminType,
-  AddUserAdminTypeResponse,
-} from "../../../services/users/addUserAdmin";
-import { getUserRoles } from "../../../services/users/getUserRoles";
+  addUser,
+  AddUserParam,
+  AddUserResponse
+} from "../../../services/users/addUser";
+import { getAllRoles, UserRole } from "../../../services/users/getAllRoles";
 
 type UserFormProps = {
-  onSubmit: (user: AddUserAdminType) => Promise<AddUserAdminTypeResponse>;
+  onSubmit: (user: AddUserParam) => Promise<AddUserResponse>;
   defaultData?: User;
   submitLabel?: string;
 };
@@ -21,13 +22,13 @@ const UserForm = ({ onSubmit, defaultData, submitLabel }: UserFormProps) => {
   const [error, setError] = React.useState(false);
   const [selectRole, setSelectRole] = React.useState("");
   const [roles, setRoles] = React.useState<
-    {
-      _id: string;
-      name: string;
-    }[]
+    UserRole[]
   >([]);
+  
   const [response, setResponse] =
-    React.useState<AddUserAdminTypeResponse | null>(null);
+    React.useState<AddUserResponse | null>(null);
+    console.log(response)
+
   // Vérification des entrées
   const firstNameError =
     firstName.length < 2 ? "Le prénom doit avoir au moins 2 caractères" : "";
@@ -46,8 +47,8 @@ const UserForm = ({ onSubmit, defaultData, submitLabel }: UserFormProps) => {
     lastNameError ||
     emailError ||
     (passwordError && defaultData == undefined);
-
-  const handleSubmit = async () => {
+  const handleSubmit = async (e:any) => {
+    e.preventDefault();
     if (isFormError) {
       console.log("Formulaire invalide");
       setError(true);
@@ -59,6 +60,7 @@ const UserForm = ({ onSubmit, defaultData, submitLabel }: UserFormProps) => {
           lastName,
           email,
           password,
+          role:selectRole
         });
         setResponse(res);
       } catch (error) {
@@ -70,8 +72,8 @@ const UserForm = ({ onSubmit, defaultData, submitLabel }: UserFormProps) => {
   };
   useEffect(() => {
     const fetchRoles = async () => {
-      const res = await getUserRoles();
-      setRoles(res);
+      const res = await getAllRoles();
+      setRoles(res.data);
     };
     fetchRoles();
   }, []);
@@ -86,12 +88,14 @@ const UserForm = ({ onSubmit, defaultData, submitLabel }: UserFormProps) => {
     if (defaultData?.email) {
       setEmail(defaultData.email);
     }
+     if(defaultData?.role && roles){
+      setSelectRole(roles.find(r=>r.name ==defaultData.role)?._id ?? "");
+     }
 
-    if (defaultData?.email) {
-      setEmail(defaultData.email);
-    }
-  }, [defaultData]);
-  console.log({ selectRole });
+    
+
+  }, [defaultData,roles]);
+  console.log({ defaultData,selectRole  });
   return (
     <Stack spacing={2}>
       <TextField
@@ -127,7 +131,7 @@ const UserForm = ({ onSubmit, defaultData, submitLabel }: UserFormProps) => {
           error={!!passwordError}
         />
       )}
-      <Select onChange={(event) => setSelectRole(event.target.value as string)}>
+      <Select onChange={(event) => setSelectRole(event.target.value as string)} value={selectRole}>
         {roles.map((role) => (
           <MenuItem value={role._id}>{role.name}</MenuItem>
         ))}

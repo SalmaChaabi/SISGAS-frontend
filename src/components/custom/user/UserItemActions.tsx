@@ -7,9 +7,9 @@ import { useState } from "react";
 import { User } from "../../../services/users/getAllUsers";
 import { getUserByID } from "../../../services/users/getUserbyId";
 import {
-  AddUserAdminType,
-  AddUserAdminTypeResponse,
-} from "../../../services/users/addUserAdmin";
+  AddUserParam,
+  AddUserResponse,
+} from "../../../services/users/addUser";
 import ConfirmationModal from "../../common/ConfirmationModal";
 import UserForm from "./UserForm";
 
@@ -17,8 +17,8 @@ type UserItemActionsProps = {
   onDelete: VoidFunction;
   onUpdate: (
     userId: string,
-    user: AddUserAdminType
-  ) => Promise<AddUserAdminTypeResponse>;
+    user: AddUserParam
+  ) => Promise<AddUserResponse>;
   userId: string;
 };
 export default function UserItemActions({
