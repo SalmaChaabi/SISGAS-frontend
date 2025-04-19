@@ -5,5 +5,6 @@ export type FactureType = {
     date_echeance: string;
     statut_paiement: string;
     approbationId: string;
+    statutpaiement:string
   };
   

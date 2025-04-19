@@ -6,6 +6,7 @@ type ConfirmationModalProps = {
   onConfirm: () => void;
   onCancel: () => void;
   message: string;
+  confirmLabel?:string
 };
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
@@ -13,6 +14,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   onConfirm,
   onCancel,
   message,
+  confirmLabel
 }) => {
   return (
     <Dialog open={open} onClose={onCancel}>
@@ -25,7 +27,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
           Annuler
         </Button>
         <Button onClick={onConfirm} color="error" variant="contained">
-          Supprimer
+          {confirmLabel || 'Confirmer'}
         </Button>
       </DialogActions>
     </Dialog>

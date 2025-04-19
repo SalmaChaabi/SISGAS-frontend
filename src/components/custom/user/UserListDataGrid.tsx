@@ -1,6 +1,6 @@
 import { Avatar } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { AddUserParam } from "../../../services/users/addUser";
+import { addUser, AddUserParam} from "../../../services/users/addUser";
 import { deleteUser } from "../../../services/users/deleteUser";
 import UserItemActions from "./UserItemActions";
 

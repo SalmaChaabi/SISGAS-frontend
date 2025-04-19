@@ -1,6 +1,6 @@
 
 
-import { ApprobationType, GetAllApprobationsType } from "./types";
+import { ApprobationType} from "./types";
 
 export const getAllApprobations = async () => {
   const response = await fetch(`http://localhost:5001/approbation/getAllApprobations`, {
@@ -18,3 +18,5 @@ export const getAllApprobations = async () => {
   const data: ApprobationType[] = await response.json();
   return data;
 };
+export default getAllApprobations;
+

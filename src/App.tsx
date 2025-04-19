@@ -25,6 +25,10 @@ const NAVIGATION: Navigation = [
   title: "Approbations",
   icon: <PersonIcon />,
 },
+{ segment: "factures",
+  title: "factures",
+  icon: <PersonIcon />,
+},
 ];
 
 const BRANDING = {

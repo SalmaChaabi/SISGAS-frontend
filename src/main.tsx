@@ -8,6 +8,7 @@ import UsersPage from "./pages/users";
 import App from "./App";
 import WelcomePage from "./pages/welcome";
 import Approbations from "./pages/approbations";
+import Factures from "./pages/factures";
 
 
 
@@ -22,6 +23,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <Route path="/overview" element={<DashboardPage />} />
             <Route path="/users" element={<UsersPage />} />
             <Route path="/approbations" element={<Approbations />} />
+            <Route path="/factures" element={<Factures />} />
+
+
           </Route>
           
 

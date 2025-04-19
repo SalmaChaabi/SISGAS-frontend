@@ -1,20 +1,29 @@
-import { ApprobationType } from "./types";
+const createApprobation = async (data: any) => {
+  try {
+    const response = await fetch("http://localhost:5001/approbation/createApprobation", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
 
-export const createApprobation = async () => {
-  const response = await fetch(`http://localhost:5001/approbation/createApprobation`, {
-    method: "POST",
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-     
-    },
-});
+    const result = await response.json();
 
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Erreur lors de la création de l'approbation");
+    return {
+      success: response.ok,
+      data: result,
+      message: result.message || "Approbation créée avec succès", 
+    };
+  } catch (error) {
+    console.error("Erreur dans createApprobation:", error);
+    return {
+      success: false,
+      message: "Erreur lors de la création", 
+    };
   }
-
-  const data: ApprobationType = await response.json();
-  return data;
 };
+
+export default createApprobation;
+
+
