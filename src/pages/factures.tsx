@@ -302,11 +302,13 @@ const Factures = () => {
       <ConfirmationModal  open={openModal}
         onCancel={() => setOpenVerifierModal(false)}
         onConfirm={handleVerifierConfirm}
-        message="hal anta metyakked"/>
+        message="Êtes-vous sûr de vouloir confirmer cette action ?"/>
 <ConfirmationModal  open={openVerifierModal}
         onCancel={() => setOpenVerifierModal(false)}
         onConfirm={handleVerifierConfirm}
-        message="hal anta metyakked"/>
+        message="Êtes-vous sûr de vouloir confirmer cette action ?"
+
+/>
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}

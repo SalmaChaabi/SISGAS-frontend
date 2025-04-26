@@ -26,7 +26,11 @@ const NAVIGATION: Navigation = [
   icon: <PersonIcon />,
 },
 { segment: "factures",
-  title: "factures",
+  title: "Factures",
+  icon: <PersonIcon />,
+},
+{ segment: "reclamations",
+  title: "Reclamations",
   icon: <PersonIcon />,
 },
 ];

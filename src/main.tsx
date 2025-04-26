@@ -9,6 +9,9 @@ import App from "./App";
 import WelcomePage from "./pages/welcome";
 import Approbations from "./pages/approbations";
 import Factures from "./pages/factures";
+import Reclamations from "./pages/reclamations";
+
+
 
 
 
@@ -24,6 +27,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <Route path="/users" element={<UsersPage />} />
             <Route path="/approbations" element={<Approbations />} />
             <Route path="/factures" element={<Factures />} />
+            <Route path="/reclamations" element={<Reclamations />} />
+
+
 
 
           </Route>
