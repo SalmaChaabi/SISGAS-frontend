@@ -8,12 +8,12 @@ import {
   MenuItem, 
   Switch, 
   FormControlLabel, 
-  SelectChangeEvent
+  SelectChangeEvent 
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import { ReclamationType } from "../../../services/reclamations/types";
 import getAllStatutsReclamation from "../../../services/reclamations/getAllStatutsReclamation";
-import getAllRoles from "../../../services/reclamations/getAllRoles";
+import { getAllRoles } from "../../../services/users/getAllRoles";
 
 type Props = {
   onSubmit: (data: ReclamationType) => void;
@@ -78,8 +78,15 @@ export default function ReclamationForm({
     const fetchData = async () => {
       const statutsData = await getAllStatutsReclamation();
       const rolesData = await getAllRoles();
+      
+      // Vérifie si rolesData contient bien un tableau sous la propriété 'data'
+      if (rolesData.success && Array.isArray(rolesData.data)) {
+        setRoles(rolesData.data); // Utilise les données retournées dans 'data'
+      } else {
+        console.error("Erreur: rolesData n'est pas un tableau valide.");
+      }
+
       setStatuts(statutsData);
-      setRoles(rolesData);
     };
 
     fetchData();
@@ -158,7 +165,7 @@ export default function ReclamationForm({
           >
             {roles.map((role) => (
               <MenuItem key={role._id} value={role._id}>
-                {role.nom}
+                {role.name} {/* Assure-toi d'utiliser 'name' au lieu de 'nom' si c'est bien le champ */}
               </MenuItem>
             ))}
           </Select>
@@ -189,5 +196,3 @@ export default function ReclamationForm({
     </form>
   );
 }
-
-
