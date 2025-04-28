@@ -1,5 +1,5 @@
 const deleteReclamation = async (id: string): Promise<{ message: string }> => {
-    const response = await fetch(`http://localhost:5001/reclamation/deleteReclamation//${id}`, {
+    const response = await fetch(`http://localhost:5001/reclamation/deleteReclamation/${id}`, {
       method: "DELETE",
     });
     if (!response.ok) {

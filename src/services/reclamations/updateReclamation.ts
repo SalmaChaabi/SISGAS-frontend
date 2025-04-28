@@ -1,17 +1,26 @@
 import { ReclamationType } from "./types";
 
-const updateReclamation = async (id: string, updatedData: Partial<ReclamationType>): Promise<ReclamationType> => {
-  const response = await fetch(`http://localhost:5001/reclamation/updateReclamation/${id}`, {
-    method: "PUT",
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-    },
-    body: JSON.stringify(updatedData),
-  });
-  if (!response.ok) {
-    throw new Error("Erreur lors de la mise à jour de la réclamation");
+interface UpdateReclamationResponse {
+  success: boolean;
+  message: string;
+  data: ReclamationType | null;
+}
+
+export default async function updateReclamation(id: string, updated: ReclamationType): Promise<UpdateReclamationResponse> {
+  try {
+    const response = await fetch(`http://localhost:5001/reclamation/updateReclamation/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updated),
+    });
+    const result = await response.json();
+    return {
+      success: response.ok,
+      message: result.message,
+      data: result.data,
+    };
+  } catch (error) {
+    console.error("Erreur réseau lors de l'update :", error);
+    return { success: false, message: "Erreur réseau", data: null };
   }
-  return await response.json();
-};
-export default updateReclamation;
+}

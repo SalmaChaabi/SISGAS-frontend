@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { IconButton, Dialog, DialogContent, Stack } from "@mui/material";
+import { IconButton, Dialog, DialogContent, Stack, Snackbar, Alert } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
 import ConfirmationModal from "../../common/ConfirmationModal";
 import ReclamationForm from "./ReclamationForm";
@@ -7,7 +7,7 @@ import { ReclamationType } from "../../../services/reclamations/types";
 import getReclamationById from "../../../services/reclamations/getReclamationById";
 
 type Props = {
-  onDelete: VoidFunction;
+  onDelete: (id: string) => void; // Correction ici
   onUpdate: (
     id: string,
     data: ReclamationType
@@ -22,9 +22,8 @@ export default function ReclamationItemActions({
 }: Props) {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
-  const [reclamationData, setReclamationData] = useState<ReclamationType>(
-    {} as ReclamationType
-  );
+  const [reclamationData, setReclamationData] = useState<ReclamationType>({} as ReclamationType);
+  const [openSnackbar, setOpenSnackbar] = useState(false); // Pour Snackbar success
 
   useEffect(() => {
     if (!updateModalOpen) return;
@@ -32,14 +31,20 @@ export default function ReclamationItemActions({
     const fetchReclamation = async () => {
       try {
         const data = await getReclamationById(reclamationId);
-        setReclamationData(data); // correction ici
+        setReclamationData(data);
       } catch (error) {
         console.error("Erreur lors du fetch de la réclamation :", error);
       }
     };
 
     fetchReclamation();
-  }, [updateModalOpen]);
+  }, [updateModalOpen, reclamationId]);
+
+  const handleDelete = () => {
+    onDelete(reclamationId); // Appel avec id
+    setDeleteModalOpen(false);
+    setOpenSnackbar(true); // Afficher succès
+  };
 
   return (
     <>
@@ -55,18 +60,15 @@ export default function ReclamationItemActions({
       <ConfirmationModal
         open={deleteModalOpen}
         onCancel={() => setDeleteModalOpen(false)}
-        onConfirm={() => {
-          onDelete();
-          setDeleteModalOpen(false);
-        }}
+        onConfirm={handleDelete}
         message="Supprimer cette réclamation ?"
       />
 
       <Dialog open={updateModalOpen} onClose={() => setUpdateModalOpen(false)}>
         <DialogContent>
           <ReclamationForm
-            onSubmit={(data) => {
-              onUpdate(reclamationId, data);
+            onSubmit={async (data) => {
+              await onUpdate(reclamationId, data);
               setUpdateModalOpen(false);
             }}
             defaultData={reclamationData}
@@ -74,8 +76,16 @@ export default function ReclamationItemActions({
           />
         </DialogContent>
       </Dialog>
+
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={3000}
+        onClose={() => setOpenSnackbar(false)}
+      >
+        <Alert onClose={() => setOpenSnackbar(false)} severity="success" sx={{ width: '100%' }}>
+          Réclamation supprimée avec succès !
+        </Alert>
+      </Snackbar>
     </>
   );
 }
-
-

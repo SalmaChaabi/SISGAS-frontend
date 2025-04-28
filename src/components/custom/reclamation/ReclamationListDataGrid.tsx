@@ -46,21 +46,23 @@ export default function ReclamationListDataGrid({
     const doc = new jsPDF();
     doc.setFontSize(18);
     doc.text("Liste des réclamations", 14, 20);
-
+  
     const rows = data.map((item) => [
-      item.titre,
-      item.description,
-      new Date(item.dateCreation).toLocaleDateString("fr-FR"),
+      item.titre ?? "-",
+      item.description ?? "-",
+      item.dateCreation
+        ? new Date(item.dateCreation).toLocaleDateString("fr-FR")
+        : "-",
       item.dateResolution
         ? new Date(item.dateResolution).toLocaleDateString("fr-FR")
         : "-",
-      item.commentaireAdmin || "-",
+      item.commentaireAdmin ?? "-",
       item.fournisseurIntervenu ? "Oui" : "Non",
-      item.statut,
-      item.utilisateur,
-      item.role,
+      item.statut ?? "-",
+      item.utilisateur ?? "-",
+      item.role ?? "-",
     ]);
-
+  
     autoTable(doc, {
       startY: 30,
       head: [
@@ -78,9 +80,10 @@ export default function ReclamationListDataGrid({
       ],
       body: rows,
     });
-
+  
     doc.save("liste-des-reclamations.pdf");
   };
+  
 
   const handlePrintTable = () => {
     const tableHTML = `
@@ -120,22 +123,20 @@ export default function ReclamationListDataGrid({
               </tr>
             </thead>
             <tbody>
-              ${data.map((item) => `
-                <tr>
-                  <td>${item.titre}</td>
-                  <td>${item.description}</td>
-                  <td>${new Date(item.dateCreation).toLocaleDateString("fr-FR")}</td>
-                  <td>${item.dateResolution ? new Date(item.dateResolution).toLocaleDateString("fr-FR") : "-"}</td>
-                  <td>${item.commentaireAdmin || "-"}</td>
-                  <td>${item.fournisseurIntervenu ? "Oui" : "Non"}</td>
-                  <td>${item.statut}</td>
-                  <td>${item.utilisateur}</td>
-                  <td>${item.role}</td>
-                </tr>
-              `).join("")}
-            </tbody>
-          </table>
-        </body>
+  ${data.map((item) => `
+    <tr>
+      <td>${item.titre ?? "-"}</td>
+      <td>${item.description ?? "-"}</td>
+      <td>${item.dateCreation ? new Date(item.dateCreation).toLocaleDateString("fr-FR") : "-"}</td>
+      <td>${item.dateResolution ? new Date(item.dateResolution).toLocaleDateString("fr-FR") : "-"}</td>
+      <td>${item.commentaireAdmin ?? "-"}</td>
+      <td>${item.fournisseurIntervenu ? "Oui" : "Non"}</td>
+      <td>${item.statut ?? "-"}</td>
+      <td>${item.utilisateur ?? "-"}</td>
+      <td>${item.role ?? "-"}</td>
+    </tr>
+  `).join("")}
+</tbody>
       </html>
     `;
 
