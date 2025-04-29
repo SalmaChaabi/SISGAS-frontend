@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { IconButton, Dialog, DialogContent, Stack, Snackbar, Alert } from "@mui/material";
+import {
+  IconButton,
+  Dialog,
+  DialogContent,
+  Stack,
+  Snackbar,
+  Alert,
+  DialogTitle,
+} from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
 import ConfirmationModal from "../../common/ConfirmationModal";
 import ReclamationForm from "./ReclamationForm";
@@ -22,7 +30,9 @@ export default function ReclamationItemActions({
 }: Props) {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
-  const [reclamationData, setReclamationData] = useState<ReclamationType>({} as ReclamationType);
+  const [reclamationData, setReclamationData] = useState<ReclamationType>(
+    {} as ReclamationType
+  );
   const [openSnackbar, setOpenSnackbar] = useState(false); // Pour Snackbar success
 
   useEffect(() => {
@@ -45,7 +55,7 @@ export default function ReclamationItemActions({
     setDeleteModalOpen(false);
     setOpenSnackbar(true); // Afficher succès
   };
-
+  console.log(reclamationData);
   return (
     <>
       <Stack direction="row" spacing={1}>
@@ -64,16 +74,31 @@ export default function ReclamationItemActions({
         message="Supprimer cette réclamation ?"
       />
 
-      <Dialog open={updateModalOpen} onClose={() => setUpdateModalOpen(false)}>
+      <Dialog
+        open={updateModalOpen}
+        onClose={() => setUpdateModalOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>reclamation</DialogTitle>
         <DialogContent>
-          <ReclamationForm
-            onSubmit={async (data) => {
-              await onUpdate(reclamationId, data);
-              setUpdateModalOpen(false);
-            }}
-            defaultData={reclamationData}
-            submitLabel="Modifier Réclamation"
-          />
+          {reclamationData.statut && (
+            <ReclamationForm
+              onSubmit={async (data) => {
+                await onUpdate(reclamationId, data);
+                setUpdateModalOpen(false);
+              }}
+              defaultData={{
+                ...reclamationData,
+                statut: reclamationData.statut._id,
+
+                role: reclamationData.role?._id,
+
+                utilisateur: reclamationData.utilisateur.firstName,
+              }}
+              submitLabel="Modifier Réclamation"
+            />
+          )}
         </DialogContent>
       </Dialog>
 
@@ -82,7 +107,11 @@ export default function ReclamationItemActions({
         autoHideDuration={3000}
         onClose={() => setOpenSnackbar(false)}
       >
-        <Alert onClose={() => setOpenSnackbar(false)} severity="success" sx={{ width: '100%' }}>
+        <Alert
+          onClose={() => setOpenSnackbar(false)}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
           Réclamation supprimée avec succès !
         </Alert>
       </Snackbar>

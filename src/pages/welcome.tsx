@@ -1,4 +1,6 @@
 import React from "react";
+import Grid from "@mui/material/Grid"
+
 import {
   AppBar,
   Toolbar,
@@ -6,12 +8,12 @@ import {
   Button,
   Box,
   Container,
-  Grid,
   Paper,
   TextField,
   Switch,
   Chip,
   Slider,
+
 } from "@mui/material";
 import SettingsIcon from "@mui/icons-material/Settings";
 import SecurityIcon from "@mui/icons-material/Security";
@@ -31,7 +33,7 @@ const WelcomePage = () => {
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            SYSGAS
+            Maintenova
           </Typography>
           <Button color="inherit" component={Link} to="/overview">
             Dashboard
@@ -99,7 +101,7 @@ const WelcomePage = () => {
             maxWidth="md"
             mx="auto"
           >
-            SISGAS est une application innovante conçue pour gérer et suivre les
+            Maintenova est une application innovante conçue pour gérer et suivre les
             opérations de maintenance dans un système automatisé de gestion du
             spectre de fréquence. Elle permet aux administrateurs de suivre les
             tâches, superviser les incidents, organiser les utilisateurs,

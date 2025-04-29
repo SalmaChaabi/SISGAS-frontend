@@ -6,6 +6,15 @@ import * as React from "react";
 import { Outlet, useNavigate } from "react-router";
 import { SessionContext } from "./SessionContext";
 import { useLocalStorageState } from "@toolpad/core";
+import { GridCheckCircleIcon } from "@mui/x-data-grid";
+import GavelIcon from '@mui/icons-material/Gavel';
+import ReceiptIcon from '@mui/icons-material/Receipt';
+import ReportProblemIcon from '@mui/icons-material/ReportProblem';
+import BuildIcon from '@mui/icons-material/Build';
+import SmartToyIcon from '@mui/icons-material/SmartToy';
+
+
+
 const NAVIGATION: Navigation = [
   {
     kind: "header",
@@ -21,23 +30,37 @@ const NAVIGATION: Navigation = [
     title: "Users",
     icon: <PersonIcon />,
   },
- { segment: "approbations",
-  title: "Approbations",
-  icon: <PersonIcon />,
-},
-{ segment: "factures",
-  title: "Factures",
-  icon: <PersonIcon />,
-},
-{ segment: "reclamations",
-  title: "Reclamations",
-  icon: <PersonIcon />,
-},
+  { segment: "approbations", title: "Approbations", icon: <GavelIcon /> },
+  { segment: "factures", title: "Factures", icon: <ReceiptIcon/> },
+  { segment: "reclamations", title: "Réclamations", icon: <ReportProblemIcon /> },
+  { segment: "actionsCorrectives", title: "Actions Correctives", icon: <BuildIcon /> },
+
 ];
 
+
 const BRANDING = {
-  title: "SYSGAS",
+  title: "Maintenova",
+  logo: (
+    <SmartToyIcon
+      fontSize="large"
+      sx={{
+        color: '#1976d2',
+        backgroundColor: '#e3f2fd',
+        borderRadius: '50%',
+        padding: '6px',
+        boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+        transition: 'transform 0.3s ease-in-out',
+        '&:hover': {
+          transform: 'rotate(10deg) scale(1.1)',
+        },
+        cursor: 'pointer',
+      }}
+    />
+  ),
+  favicon: "/favicon.ico",
 };
+
+
 
 export default function App() {
   const [session, setSessionState] = React.useState<Session | null>(null);

@@ -34,7 +34,9 @@ export default function ReclamationListDataGrid({
   onUpdate,
 }: Props) {
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectedActions, setSelectedActions] = useState<ActionCorrectiveType[]>([]);
+  const [selectedActions, setSelectedActions] = useState<
+    ActionCorrectiveType[]
+  >([]);
   const printRef = useRef(null);
 
   const handleViewActions = (actions: ActionCorrectiveType[]) => {
@@ -46,7 +48,7 @@ export default function ReclamationListDataGrid({
     const doc = new jsPDF();
     doc.setFontSize(18);
     doc.text("Liste des réclamations", 14, 20);
-  
+
     const rows = data.map((item) => [
       item.titre ?? "-",
       item.description ?? "-",
@@ -62,7 +64,7 @@ export default function ReclamationListDataGrid({
       item.utilisateur ?? "-",
       item.role ?? "-",
     ]);
-  
+
     autoTable(doc, {
       startY: 30,
       head: [
@@ -80,10 +82,9 @@ export default function ReclamationListDataGrid({
       ],
       body: rows,
     });
-  
+
     doc.save("liste-des-reclamations.pdf");
   };
-  
 
   const handlePrintTable = () => {
     const tableHTML = `
@@ -123,7 +124,9 @@ export default function ReclamationListDataGrid({
               </tr>
             </thead>
             <tbody>
-  ${data.map((item) => `
+  ${data
+    .map(
+      (item) => `
     <tr>
       <td>${item.titre ?? "-"}</td>
       <td>${item.description ?? "-"}</td>
@@ -135,7 +138,9 @@ export default function ReclamationListDataGrid({
       <td>${item.utilisateur ?? "-"}</td>
       <td>${item.role ?? "-"}</td>
     </tr>
-  `).join("")}
+  `
+    )
+    .join("")}
 </tbody>
       </html>
     `;
@@ -165,9 +170,25 @@ export default function ReclamationListDataGrid({
       flex: 1,
       renderCell: (params) => (params.value ? "Oui" : "Non"),
     },
-    { field: "statut", headerName: "Statut", flex: 1 },
-    { field: "utilisateur", headerName: "Utilisateur", flex: 1 },
-    { field: "role", headerName: "Rôle", flex: 1 },
+    {
+      field: "statut",
+      headerName: "Statut",
+      flex: 1,
+      valueGetter: (statut:{nom:string}) => statut.nom,
+    },
+    {
+      field: "utilisateur",
+      headerName: "Utilisateur",
+      flex: 1,
+      valueGetter: (user: { firstName: string; lastName: string }) =>
+        `${user.firstName} ${user.lastName}`,
+    },
+    {
+      field: "role",
+      headerName: "Rôle",
+      flex: 1,
+      valueGetter: (role:{name:string}) => role.name,
+    },
     {
       field: "actionsCorrectives",
       headerName: "Actions Correctives",
@@ -202,7 +223,13 @@ export default function ReclamationListDataGrid({
 
   return (
     <>
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "16px" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginBottom: "16px",
+        }}
+      >
         <Button
           variant="contained"
           color="primary"
@@ -263,7 +290,9 @@ export default function ReclamationListDataGrid({
                     <ListItemText
                       primary={
                         <>
-                          {action.description && <div>{action.description}</div>}
+                          {action.description && (
+                            <div>{action.description}</div>
+                          )}
                           {action.dateAction && (
                             <div
                               style={{
@@ -315,6 +344,3 @@ export default function ReclamationListDataGrid({
     </>
   );
 }
-
-
-

@@ -1,14 +1,15 @@
-import { 
-  Button, 
-  TextField, 
-  Stack, 
-  FormControl, 
-  InputLabel, 
-  Select, 
-  MenuItem, 
-  Switch, 
-  FormControlLabel, 
-  SelectChangeEvent 
+import {
+  Button,
+  TextField,
+  Stack,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Switch,
+  FormControlLabel,
+  SelectChangeEvent,
+  Grid,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import { ReclamationType } from "../../../services/reclamations/types";
@@ -39,8 +40,7 @@ export default function ReclamationForm({
     };
 
   const handleSelectChange =
-    (field: keyof ReclamationType) =>
-    (e: SelectChangeEvent<string>) => {
+    (field: keyof ReclamationType) => (e: SelectChangeEvent<string>) => {
       setFormData({ ...formData, [field]: e.target.value });
     };
 
@@ -78,7 +78,7 @@ export default function ReclamationForm({
     const fetchData = async () => {
       const statutsData = await getAllStatutsReclamation();
       const rolesData = await getAllRoles();
-      
+
       // Vérifie si rolesData contient bien un tableau sous la propriété 'data'
       if (rolesData.success && Array.isArray(rolesData.data)) {
         setRoles(rolesData.data); // Utilise les données retournées dans 'data'
@@ -95,92 +95,118 @@ export default function ReclamationForm({
   return (
     <form onSubmit={handleSubmit}>
       <Stack spacing={2}>
-        <TextField
-          label="Titre"
-          value={formData.titre || ""}
-          onChange={handleChange("titre")}
-          required
-          fullWidth
-        />
-        <TextField
-          label="Description"
-          value={formData.description || ""}
-          onChange={handleChange("description")}
-          required
-          fullWidth
-        />
-        <TextField
-          label="Utilisateur"
-          value={formData.utilisateur || ""}
-          onChange={handleChange("utilisateur")}
-          required
-          fullWidth
-        />
-        <TextField
-          label="Date de Création"
-          type="date"
-          InputLabelProps={{ shrink: true }}
-          value={formData.dateCreation || ""}
-          onChange={handleChange("dateCreation")}
-          fullWidth
-        />
-        <TextField
-          label="Date de Résolution"
-          type="date"
-          InputLabelProps={{ shrink: true }}
-          value={formData.dateResolution || ""}
-          onChange={handleChange("dateResolution")}
-          fullWidth
-        />
-        <TextField
-          label="Commentaire Admin"
-          value={formData.commentaireAdmin || ""}
-          onChange={handleChange("commentaireAdmin")}
-          fullWidth
-        />
-
-        {/* Statut */}
-        <FormControl fullWidth required>
-          <InputLabel>Statut</InputLabel>
-          <Select
-            value={formData.statut || ""}
-            onChange={handleSelectChange("statut")}
-            label="Statut"
-          >
-            {statuts.map((statut) => (
-              <MenuItem key={statut._id} value={statut._id}>
-                {statut.nom}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-
-        {/* Rôle */}
-        <FormControl fullWidth>
-          <InputLabel>Rôle</InputLabel>
-          <Select
-            value={formData.role || ""}
-            onChange={handleSelectChange("role")}
-            label="Rôle"
-          >
-            {roles.map((role) => (
-              <MenuItem key={role._id} value={role._id}>
-                {role.name} {/* Assure-toi d'utiliser 'name' au lieu de 'nom' si c'est bien le champ */}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-
-        {/* Fournisseur Intervenu */}
-        <FormControlLabel
-          control={
-            <Switch
-              checked={!!formData.fournisseurIntervenu}
-              onChange={handleSwitchChange("fournisseurIntervenu")}
+        <Grid container spacing={2}>
+          <Grid size={12}>
+            <TextField
+              label="Titre"
+              value={formData.titre || ""}
+              onChange={handleChange("titre")}
+              required
+              fullWidth
             />
-          }
-          label={formData.fournisseurIntervenu ? "Fournisseur Intervenu : Oui" : "Fournisseur Intervenu : Non"}
-        />
+          </Grid>
+          <Grid size={12}>
+            <TextField
+              label="Description"
+              value={formData.description || ""}
+              onChange={handleChange("description")}
+              required
+              fullWidth
+              multiline
+              rows={3}
+            />
+          </Grid>
+          <Grid size={12}>
+            <TextField
+              label="Utilisateur"
+              value={formData.utilisateur || ""}
+              onChange={handleChange("utilisateur")}
+              required
+              fullWidth
+            />
+          </Grid>
+        <Grid size={6}>
+          <TextField
+            label="Date de Création"
+            type="date"
+            InputLabelProps={{ shrink: true }}
+            value={formData.dateCreation || ""}
+            onChange={handleChange("dateCreation")}
+            fullWidth
+          />
+        </Grid>
+        <Grid size={6}>
+          <TextField
+            label="Date de Résolution"
+            type="date"
+            InputLabelProps={{ shrink: true }}
+            value={formData.dateResolution || ""}
+            onChange={handleChange("dateResolution")}
+            fullWidth
+          />
+        </Grid>
+        <Grid size={12}>
+          <TextField
+            label="Commentaire Admin"
+            value={formData.commentaireAdmin || ""}
+            onChange={handleChange("commentaireAdmin")}
+            fullWidth
+            multiline
+            rows={3}
+          />
+        </Grid>
+        <Grid size={6}>
+          {/* Statut */}
+          <FormControl fullWidth required>
+            <InputLabel>Statut</InputLabel>
+            <Select
+              value={formData.statut || ""}
+              onChange={handleSelectChange("statut")}
+              label="Statut"
+            >
+              {statuts.map((statut) => (
+                <MenuItem key={statut._id} value={statut._id}>
+                  {statut.nom}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid size={6}>
+          {/* Rôle */}
+          <FormControl fullWidth>
+            <InputLabel>Rôle</InputLabel>
+            <Select
+              value={formData.role || ""}
+              onChange={handleSelectChange("role")}
+              label="Rôle"
+            >
+              {roles.map((role) => (
+                <MenuItem key={role._id} value={role._id}>
+                  {role.name}{" "}
+                  {/* Assure-toi d'utiliser 'name' au lieu de 'nom' si c'est bien le champ */}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid size={12}>
+          {/* Fournisseur Intervenu */}
+          <FormControlLabel
+            control={
+              <Switch
+                checked={!!formData.fournisseurIntervenu}
+                onChange={handleSwitchChange("fournisseurIntervenu")}
+              />
+            }
+            label={
+              formData.fournisseurIntervenu
+                ? "Fournisseur Intervenu : Oui"
+                : "Fournisseur Intervenu : Non"
+            }
+          />
+        </Grid>
+        </Grid>
 
         <Stack direction="row" spacing={2} justifyContent="flex-end">
           {onCancel && (

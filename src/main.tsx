@@ -10,10 +10,7 @@ import WelcomePage from "./pages/welcome";
 import Approbations from "./pages/approbations";
 import Factures from "./pages/factures";
 import Reclamations from "./pages/reclamations";
-
-
-
-
+import ActionsCorrectives from './pages/actionsCorrectives';
 
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -28,6 +25,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <Route path="/approbations" element={<Approbations />} />
             <Route path="/factures" element={<Factures />} />
             <Route path="/reclamations" element={<Reclamations />} />
+            <Route path="/actionsCorrectives" element={<ActionsCorrectives/>} />
+            
 
 
 
