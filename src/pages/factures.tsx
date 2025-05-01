@@ -90,7 +90,11 @@ const Factures = () => {
     if (!selectedFactureId) return;
     try {
       const response = await validerFacture(selectedFactureId);
-      setSnackbar({ open: true, message: response.message, type: response.success?"success":'error' });
+      setSnackbar({
+        open: true,
+        message: response.message,
+        type: response.success ? "success" : "error",
+      });
       fetchFactures();
     } catch (error) {
       setSnackbar({
@@ -146,9 +150,10 @@ const Factures = () => {
     }
   };
 
-  const getStepIndex = (facture: Facture) => {
-    if (facture.statut === "Validée" || facture.statut === "Payée") return 2;
-    if (facture.verifiee) return 1;
+  const getStepIndex = (statut: string) => {
+    if (statut === "Validée" || statut === "Payée") return 3;
+    if (statut == "Vérifiée") return 2;
+    if(statut == "En attente") return 1
     return 0;
   };
 
@@ -288,7 +293,7 @@ const Factures = () => {
               </Box>
 
               <Box my={3}>
-                <Stepper activeStep={getStepIndex(facture)} alternativeLabel>
+                <Stepper activeStep={getStepIndex(facture.statutpaiement.name)} alternativeLabel>
                   {steps.map((label) => (
                     <Step key={label}>
                       <StepLabel StepIconComponent={CustomStepIcon}>
