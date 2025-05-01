@@ -33,10 +33,10 @@ interface Facture {
   date_echeance: string;
   verifiee?: boolean;
   statut?: string;
-  statutpaiement:{
-    _id:string;
-    name:string
-  }
+  statutpaiement: {
+    _id: string;
+    name: string;
+  };
 }
 
 // Étapes du workflow des factures
@@ -47,8 +47,16 @@ const CustomStepIcon = (props: StepIconProps) => {
   const { active, completed, icon } = props;
   const icons: { [index: string]: React.ReactElement } = {
     1: <DescriptionIcon color={completed ? "success" : "disabled"} />,
-    2: <SearchIcon color={completed ? "success" : active ? "info" : "disabled"} />,
-    3: <CheckCircleIcon color={completed ? "success" : active ? "primary" : "disabled"} />,
+    2: (
+      <SearchIcon
+        color={completed ? "success" : active ? "info" : "disabled"}
+      />
+    ),
+    3: (
+      <CheckCircleIcon
+        color={completed ? "success" : active ? "primary" : "disabled"}
+      />
+    ),
   };
   return icons[String(icon)];
 };
@@ -59,13 +67,17 @@ const Factures = () => {
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
-    type: "success" as "success" | "error" | "warning" | "info"
+    type: "success" as "success" | "error" | "warning" | "info",
   });
   const [openModal, setOpenModal] = useState(false);
-  const [selectedFactureId, setSelectedFactureId] = useState<string | null>(null);
+  const [selectedFactureId, setSelectedFactureId] = useState<string | null>(
+    null
+  );
   const [selectedStatut, setSelectedStatut] = useState("Payée");
   const [openVerifierModal, setOpenVerifierModal] = useState(false);
-  const [factureIdToVerify, setFactureIdToVerify] = useState<string | null>(null);
+  const [factureIdToVerify, setFactureIdToVerify] = useState<string | null>(
+    null
+  );
 
   const factureRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
@@ -74,14 +86,18 @@ const Factures = () => {
     setOpenModal(true);
   };
 
-  const handleValiderConfirm = async (statut: string) => {
+  const handleValiderConfirm = async () => {
     if (!selectedFactureId) return;
     try {
       const response = await validerFacture(selectedFactureId);
-      setSnackbar({ open: true, message: response.message, type: "success" });
+      setSnackbar({ open: true, message: response.message, type: response.success?"success":'error' });
       fetchFactures();
     } catch (error) {
-      setSnackbar({ open: true, message: "Erreur lors de la validation", type: "error" });
+      setSnackbar({
+        open: true,
+        message: "Erreur lors de la validation",
+        type: "error",
+      });
     } finally {
       setOpenModal(false);
     }
@@ -96,10 +112,18 @@ const Factures = () => {
     if (!factureIdToVerify) return;
     try {
       await verifierFacture(factureIdToVerify);
-      setSnackbar({ open: true, message: "Facture vérifiée avec succès", type: "success" });
+      setSnackbar({
+        open: true,
+        message: "Facture vérifiée avec succès",
+        type: "success",
+      });
       fetchFactures();
     } catch (error) {
-      setSnackbar({ open: true, message: "Erreur lors de la vérification", type: "error" });
+      setSnackbar({
+        open: true,
+        message: "Erreur lors de la vérification",
+        type: "error",
+      });
     } finally {
       setOpenVerifierModal(false);
     }
@@ -112,7 +136,11 @@ const Factures = () => {
       setFactures(response.factures);
     } catch (error) {
       console.error("Erreur lors du chargement des factures :", error);
-      setSnackbar({ open: true, message: "Erreur lors du chargement des factures", type: "error" });
+      setSnackbar({
+        open: true,
+        message: "Erreur lors du chargement des factures",
+        type: "error",
+      });
     } finally {
       setLoading(false);
     }
@@ -127,7 +155,7 @@ const Factures = () => {
   const handlePrint = (factureId: string) => {
     const factureElement = factureRefs.current[factureId];
     if (factureElement) {
-      const printWindow = window.open('', '', 'width=800,height=600');
+      const printWindow = window.open("", "", "width=800,height=600");
       if (printWindow) {
         printWindow.document.write(`
           <html>
@@ -170,19 +198,27 @@ const Factures = () => {
 
     const doc = new jsPDF();
     doc.setFontSize(18);
-    doc.text('FACTURE', 105, 20, { align: 'center' });
+    doc.text("FACTURE", 105, 20, { align: "center" });
     doc.setFontSize(12);
-    doc.text(`N° ${factureId}`, 105, 30, { align: 'center' });
+    doc.text(`N° ${factureId}`, 105, 30, { align: "center" });
     doc.setDrawColor(200, 200, 200);
     doc.line(20, 35, 190, 35);
 
     let yPosition = 45;
-    doc.text(`Date d'émission: ${new Date(facture.date_emission).toLocaleDateString()}`, 20, yPosition);
-    doc.text(`Date d'échéance: ${new Date(facture.date_echeance).toLocaleDateString()}`, 20, yPosition + 10);
+    doc.text(
+      `Date d'émission: ${new Date(facture.date_emission).toLocaleDateString()}`,
+      20,
+      yPosition
+    );
+    doc.text(
+      `Date d'échéance: ${new Date(facture.date_echeance).toLocaleDateString()}`,
+      20,
+      yPosition + 10
+    );
     doc.text(`Montant: ${facture.montant} TND`, 20, yPosition + 20);
     doc.text(`Statut: ${facture.statut}`, 20, yPosition + 30);
     doc.setFontSize(10);
-    doc.text('Merci pour votre confiance', 105, 280, { align: 'center' });
+    doc.text("Merci pour votre confiance", 105, 280, { align: "center" });
     doc.save(`facture_${factureId}.pdf`);
   };
 
@@ -205,115 +241,133 @@ const Factures = () => {
           Aucune facture disponible
         </Typography>
       ) : (
-        factures.map((facture) => (
-          <Paper
-            key={facture._id}
-            sx={{
-              mb: 3,
-              p: 3,
-              position: 'relative',
-              borderLeft: '4px solid',
-              borderColor:
-                facture.statut === 'Payée' ? 'success.main' :
-                facture.verifiee ? 'info.main' :
-                'grey.500'
-            }}
-            ref={(el) => { factureRefs.current[facture._id] = el; }}
-          >
-            <Typography variant="h6" gutterBottom>
-              Facture #{facture._id.slice(-6).toUpperCase()}
-            </Typography>
+        factures.map((facture) => {
+          return (
+            <Paper
+              key={facture._id}
+              sx={{
+                mb: 3,
+                p: 3,
+                position: "relative",
+                borderLeft: "4px solid",
+                borderColor:
+                  facture.statut === "Payée"
+                    ? "success.main"
+                    : facture.verifiee
+                      ? "info.main"
+                      : "grey.500",
+              }}
+              ref={(el) => {
+                factureRefs.current[facture._id] = el;
+              }}
+            >
+              <Typography variant="h6" gutterBottom>
+                Facture #{facture._id.slice(-6).toUpperCase()}
+              </Typography>
 
-            <Box display="flex" flexWrap="wrap" gap={4} mb={2}>
-              <Box>
-                <Typography><strong>💵 Montant :</strong> {facture.montant} TND</Typography>
-                <Typography><strong>🗓️ Date Émission :</strong> {new Date(facture.date_emission).toLocaleDateString()}</Typography>
+              <Box display="flex" flexWrap="wrap" gap={4} mb={2}>
+                <Box>
+                  <Typography>
+                    <strong>💵 Montant :</strong> {facture.montant} TND
+                  </Typography>
+                  <Typography>
+                    <strong>🗓️ Date Émission :</strong>{" "}
+                    {new Date(facture.date_emission).toLocaleDateString()}
+                  </Typography>
+                </Box>
+                <Box>
+                  <Typography>
+                    <strong>⏳ Date Échéance :</strong>{" "}
+                    {new Date(facture.date_echeance).toLocaleDateString()}
+                  </Typography>
+                  <Typography>
+                    <strong>📌 Statut :</strong>{" "}
+                    {facture.statutpaiement.name || "En attente"}
+                  </Typography>
+                </Box>
               </Box>
-              <Box>
-                <Typography><strong>⏳ Date Échéance :</strong> {new Date(facture.date_echeance).toLocaleDateString()}</Typography>
-                <Typography><strong>📌 Statut :</strong> {facture.statutpaiement.name || 'En attente'}</Typography>
-            
+
+              <Box my={3}>
+                <Stepper activeStep={getStepIndex(facture)} alternativeLabel>
+                  {steps.map((label) => (
+                    <Step key={label}>
+                      <StepLabel StepIconComponent={CustomStepIcon}>
+                        {label}
+                      </StepLabel>
+                    </Step>
+                  ))}
+                </Stepper>
               </Box>
-            </Box>
 
-            <Box my={3}>
-              <Stepper activeStep={getStepIndex(facture)} alternativeLabel>
-                {steps.map((label) => (
-                  <Step key={label}>
-                    <StepLabel StepIconComponent={CustomStepIcon}>{label}</StepLabel>
-                  </Step>
-                ))}
-              </Stepper>
-            </Box>
+              <Box mt={3} display="flex" gap={2} flexWrap="wrap">
+                {facture.statutpaiement.name == "En attente" && (
+                  <Button
+                    variant="outlined"
+                    color="info"
+                    onClick={() => handleOpenVerifierModal(facture._id)}
+                    startIcon={<SearchIcon />}
+                  >
+                    Vérifier
+                  </Button>
+                )}
 
-            <Box mt={3} display="flex" gap={2} flexWrap="wrap">
-              {facture.statutpaiement.name == 'En attente' && (
+                {facture.statutpaiement.name == "Vérifiée" && (
+                  <Button
+                    variant="contained"
+                    color="success"
+                    onClick={() => openValiderModal(facture._id)}
+                  >
+                    Valider
+                  </Button>
+                )}
+
                 <Button
                   variant="outlined"
-                  color="info"
-                  onClick={() => handleOpenVerifierModal(facture._id)}
-                  startIcon={<SearchIcon />}
+                  startIcon={<PrintIcon />}
+                  onClick={() => handlePrint(facture._id)}
+                  sx={{ ml: "auto" }}
                 >
-                  Vérifier
+                  Imprimer
                 </Button>
-              )}
 
-              {facture.statutpaiement.name == 'Vérifiée' && (
                 <Button
-                  variant="contained"
-                  color="success"
-                  onClick={() => openValiderModal(facture._id)}
+                  variant="outlined"
+                  color="secondary"
+                  startIcon={<PictureAsPdfIcon />}
+                  onClick={() => handleExportPDF(facture._id)}
                 >
-                  Valider
+                  Export PDF
                 </Button>
-              )}
-
-              <Button
-                variant="outlined"
-                startIcon={<PrintIcon />}
-                onClick={() => handlePrint(facture._id)}
-                sx={{ ml: 'auto' }}
-              >
-                Imprimer
-              </Button>
-
-              <Button
-                variant="outlined"
-                color="secondary"
-                startIcon={<PictureAsPdfIcon />}
-                onClick={() => handleExportPDF(facture._id)}
-              >
-                Export PDF
-              </Button>
-            </Box>
-          </Paper>
-        ))
+              </Box>
+            </Paper>
+          );
+        })
       )}
 
-  
-
-      <ValiderModal
+      {/* <ValiderModal
         open={openModal}
         onClose={() => setOpenModal(false)}
         onConfirm={handleValiderConfirm}
         selectedStatut={selectedStatut}
         setSelectedStatut={setSelectedStatut}
+      /> */}
+      <ConfirmationModal
+        open={openModal}
+        onCancel={() => setOpenModal(false)}
+        onConfirm={handleValiderConfirm}
+        message="Êtes-vous sûr de vouloir valider cette facture ?"
       />
-      <ConfirmationModal  open={openModal}
-        onCancel={() => setOpenVerifierModal(false)}
-        onConfirm={handleVerifierConfirm}
-        message="Êtes-vous sûr de vouloir confirmer cette action ?"/>
-<ConfirmationModal  open={openVerifierModal}
+      <ConfirmationModal
+        open={openVerifierModal}
         onCancel={() => setOpenVerifierModal(false)}
         onConfirm={handleVerifierConfirm}
         message="Êtes-vous sûr de vouloir confirmer cette action ?"
-
-/>
+      />
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}
         onClose={() => setSnackbar({ ...snackbar, open: false })}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
       >
         <Alert
           severity={snackbar.type}

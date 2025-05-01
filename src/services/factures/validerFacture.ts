@@ -1,6 +1,6 @@
 export const validerFacture = async (id: string ) => {
     const response = await fetch(`http://localhost:5001/facture/validerFacture/${id}`, {
-      method: "POST",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",

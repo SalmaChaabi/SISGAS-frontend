@@ -74,7 +74,7 @@ function Reclamations() {
         alert("Erreur lors de la création !");
       }
     } catch (error) {
-      console.error("Erreur lors de la création :", error);
+      console.error("Erreur lors de la création :", error); 
       alert("Erreur réseau !");
     }
   };
