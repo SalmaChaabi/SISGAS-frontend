@@ -6,22 +6,22 @@ import { useNavigate } from "react-router";
 import { useSession } from "../SessionContext";
 import { login } from "../services/auth/login";
 
-// const fakeAsyncGetSession = async (formData: any): Promise<Session> => {
-//   return new Promise((resolve, reject) => {
+//  const fakeAsyncGetSession = async (formData: any): Promise<Session> => {
+//    return new Promise((resolve, reject) => {
 //     setTimeout(() => {
-//       if (formData.get('password') === 'password') {
+//        if (formData.get('password') === 'password') {
 //         resolve({
 //           user: {
 //             name: 'Bharat Kashyap',
 //             email: formData.get('email') || '',
-//             image: 'https://avatars.githubusercontent.com/u/19550456',
-//           },
-//         });
-//       }
+//              image: 'https://avatars.githubusercontent.com/u/19550456',
+//            },
+//          });
+//        }
 //       reject(new Error('Incorrect credentials.'));
 //     }, 1000);
 //   });
-// };
+//  };
 
 export default function SignIn() {
   const { setSession } = useSession();
@@ -40,6 +40,7 @@ export default function SignIn() {
           if (response.success) {
             setSession({
               user: {
+                id:response.user._id,
                 name: response.user.firstName,
                 email: response.user.email,
                 image:

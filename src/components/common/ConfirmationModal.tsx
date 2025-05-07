@@ -17,7 +17,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   confirmLabel
 }) => {
   return (
-    <Dialog open={open} onClose={onCancel}>
+    <Dialog open={open} onClose={onCancel} >
       <DialogTitle>Confirmation</DialogTitle>
       <DialogContent>
         <p>{message}</p>

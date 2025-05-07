@@ -19,6 +19,7 @@ type Props = {
   onUpdate: (
     id: string,
     data: ReclamationType
+
   ) => Promise<{ success: boolean; message: string; data: any }>;
   reclamationId: string;
 };

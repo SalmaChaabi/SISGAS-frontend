@@ -116,15 +116,7 @@ export default function ReclamationForm({
               rows={3}
             />
           </Grid>
-          <Grid size={12}>
-            <TextField
-              label="Utilisateur"
-              value={formData.utilisateur || ""}
-              onChange={handleChange("utilisateur")}
-              required
-              fullWidth
-            />
-          </Grid>
+          
         <Grid size={6}>
           <TextField
             label="Date de Création"

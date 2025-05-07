@@ -1,3 +1,4 @@
+/// pages/reclamations.tsx
 import React, { useEffect, useState } from "react";
 import ReclamationListDataGrid from "../components/custom/reclamation/ReclamationListDataGrid";
 import { Box, Button, Dialog, DialogContent, Snackbar, Alert } from "@mui/material";
@@ -8,11 +9,13 @@ import getAllReclamations from "../services/reclamations/getAllReclamations";
 import deleteReclamation from "../services/reclamations/deleteReclamation";
 import updateReclamation from "../services/reclamations/updateReclamation";
 import createReclamation from "../services/reclamations/createReclamation";
+import { useSession } from "../SessionContext";
 
 function Reclamations() {
   const [reclamations, setReclamations] = useState<ReclamationType[]>([]);
   const [openFormModal, setOpenFormModal] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const { session } = useSession();
 
   // Récupérer toutes les réclamations
   useEffect(() => {
@@ -37,35 +40,59 @@ function Reclamations() {
     }
   };
 
-  // Mettre à jour une réclamation
+  // Mettre à jour une réclamation (corrigé)
+  const handleUpdate = async (
+    id: string,
+    updated: ReclamationType
+  ): Promise<{ success: boolean; message: string; data: any }> => {
+    const userId = session?.user?.id;
+    if (!userId) {
+      return { success: false, message: "Utilisateur non connecté", data: null };
+    }
   
-  const handleUpdate = async (id: string, updated: ReclamationType) => {
     try {
-      // Appel à la fonction updateReclamation
-      const response = await updateReclamation(id, updated);
-      
-      // Vérifier si la réponse est valide
-      if (response.success && response.data) {
-        // Assurez-vous que response.data est bien de type ReclamationType
+      const response = await updateReclamation(id, {
+        ...updated,
+        utilisateur: userId,
+      });
+  
+      if (response?.success && response.data) {
+        const updatedReclamation = response.data as ReclamationType;
         setReclamations((prev) =>
           prev.map((item) =>
-            item._id === id ? (response.data as unknown as ReclamationType) : item // Type assertion explicite
+            item._id === id ? updatedReclamation : item
           )
         );
       }
-      return response;
+  
+      return (
+        response ?? {
+          success: false,
+          message: "Réponse indéfinie",
+          data: null,
+        }
+      );
     } catch (error) {
       console.error("Erreur lors de la mise à jour :", error);
-      return { success: false, message: "Erreur serveur", data: null };
+      return {
+        success: false,
+        message: "Erreur serveur",
+        data: null,
+      };
     }
   };
-  
   
 
   // Créer une nouvelle réclamation
   const handleCreate = async (data: ReclamationType) => {
     try {
-      const response = await createReclamation(data);
+      const userId = session?.user?.id;
+      if (!userId) {
+        alert("Utilisateur non connecté !");
+        return;
+      }
+
+      const response = await createReclamation(userId, data);
       if (response.success) {
         setReclamations((prev) => [...prev, response.data]);
         setOpenFormModal(false);
@@ -74,7 +101,7 @@ function Reclamations() {
         alert("Erreur lors de la création !");
       }
     } catch (error) {
-      console.error("Erreur lors de la création :", error); 
+      console.error("Erreur lors de la création :", error);
       alert("Erreur réseau !");
     }
   };
@@ -121,7 +148,3 @@ function Reclamations() {
 }
 
 export default Reclamations;
-
-
-
-

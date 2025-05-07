@@ -95,8 +95,15 @@ export default function UserItemActions({
           setUpdateModalOpen(false);
           handleClose();
         }}
+        slotProps={{
+          paper:{
+            sx:{
+              background:'none'
+            }
+          }
+        }}
       >
-        <DialogContent>
+        <DialogContent >
           <UserForm
             onSubmit={(user) => onUpdate(userId, user)}
             defaultData={userData}

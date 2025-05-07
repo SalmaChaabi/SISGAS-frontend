@@ -113,27 +113,38 @@ function Approbations() {
         }}
       >
         <Button
-          variant="contained"
-          color="primary"
-          startIcon={<Add />}
-          onClick={handleCreateClick}
-          sx={{
-            px: 2,
-            py: 1.5,
-            borderRadius: 1,
-            textTransform: "none",
-            fontSize: "0.875rem",
-            fontWeight: 600,
-            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-            "&:hover": {
-              boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
-              transform: "translateY(-1px)",
-            },
-            transition: "all 0.2s ease",
-          }}
-        >
-          Create Approbation
-        </Button>
+  variant="contained"
+  startIcon={<Add />}
+  onClick={handleCreateClick}
+  sx={{
+    px: 3,
+    py: 1.5,
+    borderRadius: "30px", // Coins arrondis pour un look plus moderne
+    textTransform: "none",
+    fontSize: "1rem", // Taille de la police ajustée pour plus de visibilité
+    fontWeight: 600,
+    background: "linear-gradient(45deg, #FF69B4, #8B4513, #32CD32)", // Dégradé rose, marron et vert
+    backgroundSize: '400% 400%',
+    animation: 'gradientFlow 6s ease infinite', // Animation du dégradé pour plus de dynamisme
+    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)", // Ombre douce autour du bouton
+    border: '2px solid transparent', // Bordure invisible mais espace pour l'effet
+    backgroundClip: "padding-box", // Crée une bordure interne visible
+    "&:hover": {
+      boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.3)", // Ombre plus forte au survol
+      transform: "scale(1.05)", // Agrandir un peu au survol pour un effet dynamique
+      backgroundPosition: '100% 50%', // Changer la position du dégradé au survol
+    },
+    transition: "all 0.3s ease",
+    '@keyframes gradientFlow': {
+      '0%': { backgroundPosition: '0% 50%' },
+      '50%': { backgroundPosition: '100% 50%' },
+      '100%': { backgroundPosition: '0% 50%' },
+    },
+  }}
+>
+  Create Approbation
+</Button>
+
       </Box>
 
       {/*  Liste */}

@@ -6,13 +6,20 @@ interface UpdateReclamationResponse {
   data: ReclamationType | null;
 }
 
-export default async function updateReclamation(id: string, updated: ReclamationType): Promise<UpdateReclamationResponse> {
+export default async function updateReclamation(
+  id: string,
+  updated: ReclamationType
+): Promise<UpdateReclamationResponse> {
+  console.log("updated", updated);
   try {
-    const response = await fetch(`http://localhost:5001/reclamation/updateReclamation/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updated),
-    });
+    const response = await fetch(
+      `http://localhost:5001/reclamation/updateReclamation/${id}`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updated),
+      }
+    );
     const result = await response.json();
     return {
       success: response.ok,

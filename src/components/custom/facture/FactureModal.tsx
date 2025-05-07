@@ -34,7 +34,9 @@ const FactureModal = ({ open, onClose, facture }: Props) => {
       if (!facture?._id) return;
 
       try {
-        const response = await fetch(`/api/statut-paiement/by-facture/${facture._id}`);
+        const response = await fetch(
+          `/api/statut-paiement/by-facture/${facture._id}`
+        );
         if (!response.ok) {
           throw new Error("Erreur lors du chargement des statuts");
         }
@@ -72,7 +74,11 @@ const FactureModal = ({ open, onClose, facture }: Props) => {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>
-        <Stack direction="row" alignItems="center" justifyContent="space-between">
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+        >
           <Stack direction="row" alignItems="center" spacing={1}>
             <IconButton onClick={onClose}>
               <ArrowBack />
@@ -95,16 +101,22 @@ const FactureModal = ({ open, onClose, facture }: Props) => {
             <strong>💵 Montant :</strong> {facture.montant} TND
           </Typography>
           <Typography>
-            <strong>🗓️ Date Émission :</strong> {facture.date_emission}
+            <strong>🗓️ Date Émission :</strong>{" "}
+            {new Date(facture.date_emission).toLocaleDateString("fr-FR", {
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
           </Typography>
           <Typography>
             <strong>⏳ Date Échéance :</strong> {facture.date_echeance}
           </Typography>
 
-          <Typography  sx={{ mt: 2 }}>
+          <Typography sx={{ mt: 2 }}>
             📄 Statuts de Paiement : {facture.statutpaiement}
           </Typography>
-         
         </Stack>
       </DialogContent>
     </Dialog>
@@ -112,5 +124,3 @@ const FactureModal = ({ open, onClose, facture }: Props) => {
 };
 
 export default FactureModal;
-
-  

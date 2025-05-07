@@ -12,6 +12,9 @@ import ReceiptIcon from '@mui/icons-material/Receipt';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import BuildIcon from '@mui/icons-material/Build';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
+import 'leaflet/dist/leaflet.css';
+
+
 
 
 
@@ -95,7 +98,6 @@ export default function App() {
   React.useEffect(() => {
     if (localStorageSession) setSession(JSON.parse(localStorageSession));
   }, [localStorageSession]);
-  console.log({ session });
   return (
     <SessionContext.Provider value={sessionContextValue}>
       <ReactRouterAppProvider

@@ -13,7 +13,6 @@ const updateActionCorrective = async (id: string, updatedData: ActionCorrectiveT
     });
 
     const data = await response.json();
-
     if (!response.ok) {
       throw new Error(data.message || "Erreur lors de la mise à jour");
     }
