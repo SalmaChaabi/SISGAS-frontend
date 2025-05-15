@@ -11,6 +11,8 @@ import Approbations from "./pages/approbations";
 import Factures from "./pages/factures";
 import Reclamations from "./pages/reclamations";
 import ActionsCorrectives from './pages/actionsCorrectives';
+import { Notifications } from "@mui/icons-material";
+import NotificationsPage from "./pages/notifications";
 
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -26,9 +28,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <Route path="/factures" element={<Factures />} />
             <Route path="/reclamations" element={<Reclamations />} />
             <Route path="/actionsCorrectives" element={<ActionsCorrectives/>} />
-            
-
-
+            <Route path="/notifications" element={<NotificationsPage />} />
 
 
           </Route>

@@ -116,7 +116,15 @@ export default function ReclamationForm({
               rows={3}
             />
           </Grid>
-          
+          <Grid size={12}>
+            <TextField
+              label="Utilisateur"
+              value={formData.utilisateur || ""}
+              onChange={handleChange("utilisateur")}
+              required
+              fullWidth
+            />
+          </Grid>
         <Grid size={6}>
           <TextField
             label="Date de Création"
@@ -139,9 +147,9 @@ export default function ReclamationForm({
         </Grid>
         <Grid size={12}>
           <TextField
-            label="Commentaire Admin"
-            value={formData.commentaireAdmin || ""}
-            onChange={handleChange("commentaireAdmin")}
+            label="Commentaire de l'utilisateur"
+            value={formData.Commentaireutilisateur || ""}
+            onChange={handleChange("Commentaireutilisateur")}
             fullWidth
             multiline
             rows={3}
@@ -206,9 +214,27 @@ export default function ReclamationForm({
               Annuler
             </Button>
           )}
-          <Button variant="contained" type="submit">
-            {submitLabel}
-          </Button>
+ <Button
+  type="submit"
+  sx={{
+    background: "linear-gradient(90deg, #F44336, #E57373)",
+    color: "white",
+    fontWeight: "bold",
+    padding: "10px 20px",
+    borderRadius: "30px",
+    boxShadow: "0 4px 10px rgba(244, 67, 54, 0.4)",
+    transition: "transform 0.3s ease, box-shadow 0.3s ease",
+    '&:hover': {
+      transform: "scale(1.05)",
+      boxShadow: "0 6px 15px rgba(244, 67, 54, 0.6)",
+      background: "linear-gradient(90deg, #D32F2F, #EF5350)",
+    },
+  }}
+>
+  {submitLabel}
+</Button>
+
+
         </Stack>
       </Stack>
     </form>

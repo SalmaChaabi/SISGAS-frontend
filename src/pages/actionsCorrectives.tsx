@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, Dialog, DialogContent, Snackbar, Alert, Select, MenuItem } from "@mui/material";
+import { Box, Button, Dialog, DialogContent, Snackbar, Alert } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { ActionCorrectiveType } from "../services/actionsCorrectives/types";
 import getAllActionsCorrectives from "../services/actionsCorrectives/getAllActionsCorrectives";
@@ -13,26 +13,28 @@ import { useSession } from "../SessionContext";
 
 function ActionCorrectivesPage() {
   const [actionsCorrectives, setActionsCorrectives] = useState<ActionCorrectiveType[]>([]);
-  const [statuts, setStatuts] = useState<any[]>([]); 
+  const [statuts, setStatuts] = useState<any[]>([]);
   const [openFormModal, setOpenFormModal] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
+ 
 
+  // Charger les actions correctives et les statuts lors du premier rendu
   useEffect(() => {
     const fetchData = async () => {
-      const data = await getAllActionsCorrectives();
-      setActionsCorrectives(data);
-
-
       try {
+        const actionsData = await getAllActionsCorrectives();
+        setActionsCorrectives(actionsData);
+
         const statutsData = await getAllStatutsReclamation();
-        setStatuts(statutsData); 
+        setStatuts(statutsData);
       } catch (error) {
-        console.error("Error fetching statuts:", error);
+        console.error("Erreur lors de la récupération des données :", error);
       }
     };
     fetchData();
   }, []);
 
+  // Fonction pour gérer la suppression d'une action corrective
   const handleDelete = async (id: string) => {
     const success = await deleteActionCorrective(id);
     if (success) {
@@ -40,6 +42,7 @@ function ActionCorrectivesPage() {
     }
   };
 
+  // Fonction pour mettre à jour une action corrective
   const handleUpdate = async (id: string, updatedData: ActionCorrectiveType) => {
     const response = await updateActionCorrective(id, updatedData);
     if (response.success && response.data) {
@@ -49,6 +52,7 @@ function ActionCorrectivesPage() {
     }
   };
 
+  // Fonction pour créer une nouvelle action corrective
   const handleCreate = async (newData: ActionCorrectiveType) => {
     const response = await createActionCorrective(newData);
     if (response.success && response.data) {
@@ -67,9 +71,10 @@ function ActionCorrectivesPage() {
       </Box>
 
       <ActionCorrectiveListDataGrid
-        data={actionsCorrectives}
+        data={actionsCorrectives}  // Passer les actions correctives
         onDelete={handleDelete}
         onUpdate={handleUpdate}
+        statuts={statuts} // Passer les statuts
       />
 
       <Dialog open={openFormModal} onClose={() => setOpenFormModal(false)}>
@@ -83,7 +88,7 @@ function ActionCorrectivesPage() {
               dateAction: undefined,
             }}
             submitLabel="Ajouter Action Corrective"
-            statuts={statuts} 
+            statuts={statuts} // Passer les statuts
           />
         </DialogContent>
       </Dialog>
@@ -102,6 +107,7 @@ function ActionCorrectivesPage() {
 }
 
 export default ActionCorrectivesPage;
+
 
 
 

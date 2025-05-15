@@ -14,7 +14,8 @@
     "@mui/material": "^7.1.0",
     "@mui/x-data-grid": "^8.1.0",
     "@toolpad/core": "^0.12.0",
-    "framer-motion": "^12.10.0",
+    "file-saver": "^2.0.5",
+    "framer-motion": "^12.10.5",
     "html2canvas": "^1.4.1",
     "html2pdf.js": "^0.10.3",
     "leaflet": "^1.9.4",
@@ -24,7 +25,10 @@
     "react-leaflet": "^5.0.0",
     "react-router": "^7",
     "react-router-dom": "^7.5.3",
-    "react-to-print": "^3.0.6",
+    "react-to-pdf": "^2.0.0",
+    "react-to-print": "^3.1.0",
+    "recharts": "^2.15.3",
+    "tableau-api": "^2.2.3",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {

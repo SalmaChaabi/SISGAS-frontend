@@ -86,7 +86,7 @@ export default function UserItemActions({
           setDeleteModalOpen(false);
           handleClose();
         }}
-        message="Êtes-vous sûr de vouloir supprimer cet utilisateur ?"
+        message= " 👉 Êtes-vous sûr de vouloir supprimer ce compte ? Cette action est irréversible."
       />
       {/* when we click update, it opens a modal with user form */}
       <Dialog

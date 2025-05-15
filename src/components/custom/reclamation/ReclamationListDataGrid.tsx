@@ -19,19 +19,26 @@ import autoTable from "jspdf-autotable";
 import { ReclamationType } from "../../../services/reclamations/types";
 import { ActionCorrectiveType } from "../../../services/reclamations/ActionCorrectiveType";
 
+
+
+
 type Props = {
   data: ReclamationType[];
+
   onDelete: (id: string) => void;
   onUpdate: (
     id: string,
     data: ReclamationType
   ) => Promise<{ success: boolean; message: string; data: any }>;
+  getStatusIcon: (status: string) => React.ReactElement;
+
 };
 
 export default function ReclamationListDataGrid({
   data,
   onDelete,
   onUpdate,
+  
 }: Props) {
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedActions, setSelectedActions] = useState<
@@ -44,115 +51,135 @@ export default function ReclamationListDataGrid({
     setOpenDialog(true);
   };
 
-  const handleExportPDF = () => {
-    const doc = new jsPDF();
-    doc.setFontSize(18);
-    doc.text("Liste des réclamations", 14, 20);
+const handleExportPDF = () => {
+  const doc = new jsPDF();
+  doc.setFontSize(18);
+  doc.text("Liste des réclamations", 14, 20);
 
-    const rows = data.map((item) => [
-      item.titre ?? "-",
-      item.description ?? "-",
-      item.dateCreation
-        ? new Date(item.dateCreation).toLocaleDateString("fr-FR")
-        : "-",
-      item.dateResolution
-        ? new Date(item.dateResolution).toLocaleDateString("fr-FR")
-        : "-",
-      item.commentaireAdmin ?? "-",
-      item.fournisseurIntervenu ? "Oui" : "Non",
-      item.statut ?? "-",
-      item.utilisateur ?? "-",
-      item.role ?? "-",
-    ]);
+  const rows = data.map((item) => [
+    item.titre ?? "-",
+    item.description ?? "-",
+    item.dateCreation
+      ? new Date(item.dateCreation).toLocaleDateString("fr-FR")
+      : "-",
+    item.dateResolution
+      ? new Date(item.dateResolution).toLocaleDateString("fr-FR")
+      : "-",
+    item.Commentaireutilisateur ?? "-",
+    item.fournisseurIntervenu ? "Oui" : "Non",
+    item.statut?.nom ?? "-",
+    item.utilisateur
+      ? `${item.utilisateur.firstName} ${item.utilisateur.lastName}`
+      : "-",
+    item.role?.name ?? "-",
+    item.actionsCorrectives?.length || 0,
+  ]);
 
-    autoTable(doc, {
-      startY: 30,
-      head: [
-        [
-          "Titre",
-          "Description",
-          "Date Création",
-          "Date Résolution",
-          "Commentaire Admin",
-          "Fournisseur Intervenu",
-          "Statut",
-          "Utilisateur",
-          "Rôle",
-        ],
+  autoTable(doc, {
+    startY: 30,
+    head: [
+      [
+        "Titre",
+        "Description",
+        "Date Création",
+        "Date Résolution",
+        "Commentaire de l'utilisateur",
+        "Fournisseur Intervenu",
+        "Statut",
+        "Utilisateur",
+        "Rôle",
+        "Nb. Actions Correctives",
       ],
-      body: rows,
-    });
+    ],
+    body: rows,
+  });
 
-    doc.save("liste-des-reclamations.pdf");
-  };
+  doc.save("liste-des-reclamations.pdf");
+};
 
   const handlePrintTable = () => {
-    const tableHTML = `
-      <html>
-        <head>
-          <title>Liste des réclamations</title>
-          <style>
-            table {
-              width: 100%;
-              border-collapse: collapse;
-              font-family: Arial, sans-serif;
-            }
-            th, td {
-              border: 1px solid #ccc;
-              padding: 8px;
-              text-align: left;
-            }
-            th {
-              background-color: #f5f5f5;
-            }
-          </style>
-        </head>
-        <body>
-          <h2>Liste des réclamations</h2>
-          <table>
-            <thead>
+  const tableHTML = `
+    <html>
+      <head>
+        <title>Liste des réclamations</title>
+        <style>
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: Arial, sans-serif;
+          }
+          th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+          }
+          th {
+            background-color: #f5f5f5;
+          }
+        </style>
+      </head>
+      <body>
+        <h2>Liste des réclamations</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Titre</th>
+              <th>Description</th>
+              <th>Date Création</th>
+              <th>Date Résolution</th>
+              <th>Commentaire de l'utilisateur</th>
+              <th>Fournisseur Intervenu</th>
+              <th>Statut</th>
+              <th>Utilisateur</th>
+              <th>Rôle</th>
+              <th>Nb. Actions Correctives</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${data
+              .map(
+                (item) => `
               <tr>
-                <th>Titre</th>
-                <th>Description</th>
-                <th>Date Création</th>
-                <th>Date Résolution</th>
-                <th>Commentaire Admin</th>
-                <th>Fournisseur Intervenu</th>
-                <th>Statut</th>
-                <th>Utilisateur</th>
-                <th>Rôle</th>
+                <td>${item.titre ?? "-"}</td>
+                <td>${item.description ?? "-"}</td>
+                <td>${
+                  item.dateCreation
+                    ? new Date(item.dateCreation).toLocaleDateString("fr-FR")
+                    : "-"
+                }</td>
+                <td>${
+                  item.dateResolution
+                    ? new Date(item.dateResolution).toLocaleDateString("fr-FR")
+                    : "-"
+                }</td>
+                <td>${item.Commentaireutilisateur ?? "-"}</td>
+                <td>${item.fournisseurIntervenu ? "Oui" : "Non"}</td>
+                <td>${item.statut?.nom ?? "-"}</td>
+                <td>${
+                  item.utilisateur
+                    ? `${item.utilisateur.firstName} ${item.utilisateur.lastName}`
+                    : "-"
+                }</td>
+                <td>${item.role?.name ?? "-"}</td>
+                <td>${item.actionsCorrectives?.length || 0}</td>
               </tr>
-            </thead>
-            <tbody>
-  ${data
-    .map(
-      (item) => `
-    <tr>
-      <td>${item.titre ?? "-"}</td>
-      <td>${item.description ?? "-"}</td>
-      <td>${item.dateCreation ? new Date(item.dateCreation).toLocaleDateString("fr-FR") : "-"}</td>
-      <td>${item.dateResolution ? new Date(item.dateResolution).toLocaleDateString("fr-FR") : "-"}</td>
-      <td>${item.commentaireAdmin ?? "-"}</td>
-      <td>${item.fournisseurIntervenu ? "Oui" : "Non"}</td>
-      <td>${item.statut ?? "-"}</td>
-      <td>${item.utilisateur ?? "-"}</td>
-      <td>${item.role ?? "-"}</td>
-    </tr>
-  `
-    )
-    .join("")}
-</tbody>
-      </html>
-    `;
+            `
+              )
+              .join("")}
+          </tbody>
+        </table>
+      </body>
+    </html>
+  `;
 
-    const printWindow = window.open("", "_blank");
-    if (printWindow) {
-      printWindow.document.open();
-      printWindow.document.write(tableHTML);
-      printWindow.document.close();
-      printWindow.print();
-    }
-  };
+  const printWindow = window.open("", "_blank");
+  if (printWindow) {
+    printWindow.document.open();
+    printWindow.document.write(tableHTML);
+    printWindow.document.close();
+    printWindow.print();
+  }
+};
 
   const columns: GridColDef[] = [
     { field: "titre", headerName: "Titre", flex: 1 },
@@ -160,8 +187,8 @@ export default function ReclamationListDataGrid({
     { field: "dateCreation", headerName: "Date Création", flex: 1 },
     { field: "dateResolution", headerName: "Date Résolution", flex: 1 },
     {
-      field: "commentaireAdmin",
-      headerName: "Commentaire Admin",
+      field: "Commentaireutilisateur",
+      headerName: "Commentaire de l'utilisateur",
       flex: 1.5,
     },
     {

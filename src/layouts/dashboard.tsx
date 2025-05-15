@@ -12,6 +12,8 @@ export default function Layout() {
 
   React.useEffect(() => {
     // Add the `callbackUrl` search parameter
+
+    
     const timeoutId = setTimeout(() => {//set he timeout: wait for 100 msec to run the code
       if (!session) {
         const redirectTo = `/sign-in?callbackUrl=${encodeURIComponent(location.pathname)}`;
@@ -20,6 +22,7 @@ export default function Layout() {
     }, 100);
     return () => clearTimeout(timeoutId); //clear the timeout when the component unmounts (finished the render)
   }, [session]);
+  
   return (
     <DashboardLayout>
       <PageContainer>

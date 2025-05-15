@@ -7,7 +7,7 @@ const ReclamationDetailsModal = ({ reclamation }) => {
       <Typography variant="h6">Titre: {reclamation.titre}</Typography>
       <Typography>Description: {reclamation.description}</Typography>
       <Typography>Date de création: {new Date(reclamation.dateCreation).toLocaleDateString()}</Typography>
-      <Typography>Commentaire Admin: {reclamation.commentaireAdmin || 'Aucun'}</Typography>
+      <Typography>Commentaire de l'utilisateur: {reclamation.Commentaireutilisateur || 'Aucun'}</Typography>
       <Typography>Fournisseur Intervenu: {reclamation.fournisseurIntervenu ? 'Oui' : 'Non'}</Typography>
       <Typography>Statut: {reclamation.statut?.nom}</Typography>
       <Typography>Utilisateur: {reclamation.utilisateur?.nom}</Typography>

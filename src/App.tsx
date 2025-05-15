@@ -13,6 +13,8 @@ import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import BuildIcon from '@mui/icons-material/Build';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import 'leaflet/dist/leaflet.css';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+
 
 
 
@@ -37,6 +39,14 @@ const NAVIGATION: Navigation = [
   { segment: "factures", title: "Factures", icon: <ReceiptIcon/> },
   { segment: "reclamations", title: "Réclamations", icon: <ReportProblemIcon /> },
   { segment: "actionsCorrectives", title: "Actions Correctives", icon: <BuildIcon /> },
+  {
+    segment: "notifications",
+    title: "Notifications",
+    icon: <NotificationsIcon />
+  },
+
+  
+  
 
 ];
 
