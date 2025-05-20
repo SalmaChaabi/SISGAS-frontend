@@ -43,6 +43,8 @@ export default function SignIn() {
                 id:response.user._id,
                 name: response.user.firstName,
                 email: response.user.email,
+                //@ts-ignore
+                role:response.user.role,
                 image:
                   response.user.user_image ??
                    "https://avatars.githubusercontent.com/u/19550456",

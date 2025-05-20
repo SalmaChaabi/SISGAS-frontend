@@ -24,6 +24,7 @@ import { validerFacture } from "../services/factures/validerFacture";
 import ValiderModal from "../components/custom/facture/ValiderModal";
 import VerifierModal from "../components/custom/facture/VerifierModal";
 import ConfirmationModal from "../components/common/ConfirmationModal";
+import useUserRole from "../hooks/useUserRole";
 
 // Type de facture
 interface Facture {
@@ -69,6 +70,7 @@ const Factures = () => {
     message: "",
     type: "success" as "success" | "error" | "warning" | "info",
   });
+  const { isComptable } = useUserRole();
   const [openModal, setOpenModal] = useState(false);
   const [selectedFactureId, setSelectedFactureId] = useState<string | null>(
     null
@@ -153,7 +155,7 @@ const Factures = () => {
   const getStepIndex = (statut: string) => {
     if (statut === "Validée" || statut === "Payée") return 3;
     if (statut == "Vérifiée") return 2;
-    if(statut == "En attente") return 1
+    if (statut == "En attente") return 1;
     return 0;
   };
 
@@ -293,7 +295,10 @@ const Factures = () => {
               </Box>
 
               <Box my={3}>
-                <Stepper activeStep={getStepIndex(facture.statutpaiement.name)} alternativeLabel>
+                <Stepper
+                  activeStep={getStepIndex(facture.statutpaiement.name)}
+                  alternativeLabel
+                >
                   {steps.map((label) => (
                     <Step key={label}>
                       <StepLabel StepIconComponent={CustomStepIcon}>
@@ -305,7 +310,7 @@ const Factures = () => {
               </Box>
 
               <Box mt={3} display="flex" gap={2} flexWrap="wrap">
-                {facture.statutpaiement.name == "En attente" && (
+                {facture.statutpaiement.name == "En attente" && isComptable && (
                   <Button
                     variant="outlined"
                     color="info"
@@ -316,7 +321,7 @@ const Factures = () => {
                   </Button>
                 )}
 
-                {facture.statutpaiement.name == "Vérifiée" && (
+                {facture.statutpaiement.name == "Vérifiée" && isComptable && (
                   <Button
                     variant="contained"
                     color="success"

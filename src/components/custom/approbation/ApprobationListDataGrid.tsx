@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import {
   Button,
   IconButton,
@@ -21,6 +21,7 @@ import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import { motion } from "framer-motion";
 import * as XLSX from "xlsx";
+import useUserRole from "../../../hooks/useUserRole";
 
 type ApprobationListDataGridProps = {
   data: ApprobationType[];
@@ -38,6 +39,8 @@ const ApprobationListDataGrid = ({
 }: ApprobationListDataGridProps) => {
   const [openModal, setOpenModal] = useState(false);
   const [selectedFacture, setSelectedFacture] = useState<FactureType | null>(null);
+  const { isTechnicien} = useUserRole();
+
 
   const handleOpenFacture = async (approbationId: string) => {
     try {
@@ -142,28 +145,42 @@ const ApprobationListDataGrid = ({
       field: "facture",
       headerName: "Facture",
       width: 100,
+
       renderCell: (params) => (
+
         <IconButton
           onClick={() => handleOpenFacture(params.id.toString())}
           color="primary"
         >
           <Visibility />
         </IconButton>
+      
+             
+        
       ),
     },
-    {
-      field: "actions",
-      headerName: "Actions",
-      width: 150,
-      renderCell: (params) => (
-        <ApprobationItemActions
-          approbationId={params.id.toString()}
-          onDelete={() => onDelete(params.id.toString())}
-          onUpdate={onUpdate}
-        />
-      ),
-    },
-  ];
+    
+  
+ 
+  
+   ...(isTechnicien
+    ? [
+        {
+          field: "actions",
+          headerName: "Actions",
+          width: 150,
+  renderCell: (params: GridRenderCellParams) => (
+            <ApprobationItemActions
+              approbationId={params.id.toString()}
+              onDelete={() => onDelete(params.id.toString())}
+              onUpdate={onUpdate}
+            />
+          ),
+        },
+      ]
+    : []),
+];
+
 
   return (
     <Paper elevation={3} sx={{ p: 2, mt: 2 }}>

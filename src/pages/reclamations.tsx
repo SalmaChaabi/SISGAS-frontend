@@ -26,6 +26,7 @@ import createReclamation from "../services/reclamations/createReclamation";
 import { useSession } from "../SessionContext";
 import { motion } from "framer-motion";
 import { SelectChangeEvent } from "@mui/material";
+import useUserRole from "../hooks/useUserRole";
 
 // 🎯 Couleurs de statut
 const statusColors: Record<string, string> = {
@@ -47,6 +48,8 @@ function Reclamations() {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>("");
   const { session } = useSession();
+    const { isAdmin, isTechnicien, isComptable } = useUserRole();
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -197,49 +200,53 @@ function Reclamations() {
       </Box>
 
       {/* 🔘 Bouton Créer Réclamation */}
-      <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 3 }}>
-        <Button
-          variant="contained"
-          onClick={() => setOpenFormModal(true)}
-          startIcon={
-            <ReportProblemIcon
-              sx={{
-                fontSize: "24px",
-                animation: "bounce 1.5s infinite",
-                "@keyframes bounce": {
-                  "0%, 100%": {
-                    transform: "translateY(0)",
-                    animationTimingFunction: "cubic-bezier(0.8, 0, 1, 1)",
-                  },
-                  "50%": {
-                    transform: "translateY(-5px)",
-                    animationTimingFunction: "cubic-bezier(0, 0, 0.2, 1)",
-                  },
-                },
-              }}
-            />
-          }
+
+{(isAdmin || isTechnicien || isComptable) && (
+  <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 3 }}>
+    <Button
+      variant="contained"
+      onClick={() => setOpenFormModal(true)}
+      startIcon={
+        <ReportProblemIcon
           sx={{
-            background: "linear-gradient(45deg, #e53935 0%, #d32f2f 50%, #c2185b 100%)",
-            color: "white",
-            padding: "12px 24px",
-            fontSize: "16px",
-            fontWeight: "600",
-            borderRadius: "50px",
-            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-            "&:hover": {
-              background: "linear-gradient(45deg, #f44336 0%, #1976d2 50%, #388e3c 100%)",
-              boxShadow: "0 6px 12px rgba(0, 0, 0, 0.3)",
-              transform: "scale(1.05)",
-            },
-            "&:active": {
-              transform: "scale(0.98)",
+            fontSize: "24px",
+            animation: "bounce 1.5s infinite",
+            "@keyframes bounce": {
+              "0%, 100%": {
+                transform: "translateY(0)",
+                animationTimingFunction: "cubic-bezier(0.8, 0, 1, 1)",
+              },
+              "50%": {
+                transform: "translateY(-5px)",
+                animationTimingFunction: "cubic-bezier(0, 0, 0.2, 1)",
+              },
             },
           }}
-        >
-          Créer Réclamation
-        </Button>
-      </Box>
+        />
+      }
+      sx={{
+        background: "linear-gradient(45deg, #e53935 0%, #d32f2f 50%, #c2185b 100%)",
+        color: "white",
+        padding: "12px 24px",
+        fontSize: "16px",
+        fontWeight: "600",
+        borderRadius: "50px",
+        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+        "&:hover": {
+          background: "linear-gradient(45deg, #f44336 0%, #1976d2 50%, #388e3c 100%)",
+          boxShadow: "0 6px 12px rgba(0, 0, 0, 0.3)",
+          transform: "scale(1.05)",
+        },
+        "&:active": {
+          transform: "scale(0.98)",
+        },
+      }}
+    >
+      Créer Réclamation
+    </Button>
+  </Box>
+)}
+
 
       {/* 📋 Liste des réclamations */}
       <ReclamationListDataGrid

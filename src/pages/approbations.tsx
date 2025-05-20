@@ -3,7 +3,7 @@ import ApprobationListDataGrid from "../components/custom/approbation/Approbatio
 import getAllApprobations from "../services/approbation/getAllApprobations";
 import deleteApprobation from "../services/approbation/deleteApprobation";
 import updateApprobation from "../services/approbation/updateApprobation";
-import createApprobation from "../services/approbation/createApprobation"; 
+import createApprobation from "../services/approbation/createApprobation";
 import {
   Button,
   Box,
@@ -15,12 +15,13 @@ import {
 import { Add } from "@mui/icons-material";
 import ApprobationForm from "../components/custom/approbation/ApprobationForm";
 import { ApprobationType } from "../services/approbation";
+import useUserRole from "../hooks/useUserRole";
 
 function Approbations() {
   const [approbations, setApprobations] = useState<ApprobationType[]>([]);
   const [openFormModal, setOpenFormModal] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
-
+  const { isTechnicien } = useUserRole();
   // Charger toutes les approbations
   useEffect(() => {
     const fetchApprobations = async () => {
@@ -76,23 +77,24 @@ function Approbations() {
   const handleCreateApprobation = async (data: ApprobationType) => {
     try {
       console.log("Données envoyées à l'API:", JSON.stringify(data, null, 2)); // Debug détaillé
-      
+
       const response = await createApprobation(data);
       console.log("Réponse de l'API:", response); // Debug réponse
-      
+
       if (!response) {
         throw new Error("Pas de réponse du serveur");
       }
-      
+
       if (response.success) {
-        setApprobations(prev => [...prev, response.data]);
+        setApprobations((prev) => [...prev, response.data]);
         setOpenFormModal(false);
         setOpenSnackbar(true);
       } else {
         // Affiche le message d'erreur spécifique de l'API ou un message par défaut
-        const errorMessage = response.message || 
-                           response.data?.message || 
-                           "Erreur lors de la création";
+        const errorMessage =
+          response.message ||
+          response.data?.message ||
+          "Erreur lors de la création";
         throw new Error(errorMessage);
       }
     } catch (error: any) {
@@ -112,39 +114,40 @@ function Approbations() {
           gap: 2,
         }}
       >
-        <Button
-  variant="contained"
-  startIcon={<Add />}
-  onClick={handleCreateClick}
-  sx={{
-    px: 3,
-    py: 1.5,
-    borderRadius: "30px", // Coins arrondis pour un look plus moderne
-    textTransform: "none",
-    fontSize: "1rem", // Taille de la police ajustée pour plus de visibilité
-    fontWeight: 600,
-    background: "linear-gradient(45deg, #FF69B4, #8B4513, #32CD32)", // Dégradé rose, marron et vert
-    backgroundSize: '400% 400%',
-    animation: 'gradientFlow 6s ease infinite', // Animation du dégradé pour plus de dynamisme
-    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)", // Ombre douce autour du bouton
-    border: '2px solid transparent', // Bordure invisible mais espace pour l'effet
-    backgroundClip: "padding-box", // Crée une bordure interne visible
-    "&:hover": {
-      boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.3)", // Ombre plus forte au survol
-      transform: "scale(1.05)", // Agrandir un peu au survol pour un effet dynamique
-      backgroundPosition: '100% 50%', // Changer la position du dégradé au survol
-    },
-    transition: "all 0.3s ease",
-    '@keyframes gradientFlow': {
-      '0%': { backgroundPosition: '0% 50%' },
-      '50%': { backgroundPosition: '100% 50%' },
-      '100%': { backgroundPosition: '0% 50%' },
-    },
-  }}
->
-  Create Approbation
-</Button>
-
+        {isTechnicien && (
+          <Button
+            variant="contained"
+            startIcon={<Add />}
+            onClick={handleCreateClick}
+            sx={{
+              px: 3,
+              py: 1.5,
+              borderRadius: "30px", // Coins arrondis pour un look plus moderne
+              textTransform: "none",
+              fontSize: "1rem", // Taille de la police ajustée pour plus de visibilité
+              fontWeight: 600,
+              background: "linear-gradient(45deg, #FF69B4, #8B4513, #32CD32)", // Dégradé rose, marron et vert
+              backgroundSize: "400% 400%",
+              animation: "gradientFlow 6s ease infinite", // Animation du dégradé pour plus de dynamisme
+              boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)", // Ombre douce autour du bouton
+              border: "2px solid transparent", // Bordure invisible mais espace pour l'effet
+              backgroundClip: "padding-box", // Crée une bordure interne visible
+              "&:hover": {
+                boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.3)", // Ombre plus forte au survol
+                transform: "scale(1.05)", // Agrandir un peu au survol pour un effet dynamique
+                backgroundPosition: "100% 50%", // Changer la position du dégradé au survol
+              },
+              transition: "all 0.3s ease",
+              "@keyframes gradientFlow": {
+                "0%": { backgroundPosition: "0% 50%" },
+                "50%": { backgroundPosition: "100% 50%" },
+                "100%": { backgroundPosition: "0% 50%" },
+              },
+            }}
+          >
+            Create Approbation
+          </Button>
+        )}
       </Box>
 
       {/*  Liste */}
@@ -185,5 +188,3 @@ function Approbations() {
 }
 
 export default Approbations;
-
-

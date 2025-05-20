@@ -14,6 +14,8 @@ import ApprobationForm from "./ApprobationForm"; // Tu dois créer ce formulaire
 import { getApprobationById } from "../../../services/approbation/getApprobationById";
 import { ApprobationType } from "../../../services/approbation/types";
 import { Delete, Edit, Visibility } from "@mui/icons-material";
+import useUserRole from "../../../hooks/useUserRole";
+
 
 type ApprobationItemActionsProps = {
   onDelete: VoidFunction;
@@ -35,6 +37,8 @@ export default function ApprobationItemActions({
   const [approbationData, setApprobationData] = useState<ApprobationType>(
     {} as ApprobationType
   );
+    const { isTechnicien} = useUserRole();
+
 
   const handleConfirmDelete = () => {
     onDelete();
@@ -55,6 +59,7 @@ export default function ApprobationItemActions({
   return (
     <div>
       <Stack direction="row" spacing={2}>
+         {isTechnicien && (
         <IconButton
           onClick={() => {
             setUpdateModalOpen(true);
@@ -63,9 +68,13 @@ export default function ApprobationItemActions({
         >
           <Edit />
         </IconButton>
+         )}
+          {isTechnicien && (
         <IconButton onClick={() => setDeleteModalOpen(true)} color="error">
           <Delete />
         </IconButton>
+          )}
+          
       </Stack>
 
       <ConfirmationModal

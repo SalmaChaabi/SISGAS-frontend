@@ -1,4 +1,4 @@
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import ReclamationItemActions from "./ReclamationItemActions";
 import {
   Dialog,
@@ -18,6 +18,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { ReclamationType } from "../../../services/reclamations/types";
 import { ActionCorrectiveType } from "../../../services/reclamations/ActionCorrectiveType";
+import useUserRole from "../../../hooks/useUserRole";
 
 
 
@@ -45,6 +46,8 @@ export default function ReclamationListDataGrid({
     ActionCorrectiveType[]
   >([]);
   const printRef = useRef(null);
+  const { isAdmin, isTechnicien, isComptable } = useUserRole();
+
 
   const handleViewActions = (actions: ActionCorrectiveType[]) => {
     setSelectedActions(actions);
@@ -234,18 +237,22 @@ const handleExportPDF = () => {
         );
       },
     },
-    {
-      field: "actions",
-      headerName: "Actions",
-      width: 150,
-      renderCell: (params) => (
-        <ReclamationItemActions
-          reclamationId={params.id.toString()}
-          onDelete={() => onDelete(params.id.toString())}
-          onUpdate={onUpdate}
-        />
-      ),
-    },
+     ...(isAdmin || isTechnicien || isComptable
+    ? [
+       {
+  field: "actions",
+  headerName: "Actions",
+  width: 150,
+  renderCell: (params: GridRenderCellParams) => (
+    <ReclamationItemActions
+      reclamationId={params.id.toString()}
+      onDelete={() => onDelete(params.id.toString())}
+      onUpdate={onUpdate}
+    />
+  ),
+}
+      ]
+    : []),
   ];
 
   return (
@@ -257,6 +264,9 @@ const handleExportPDF = () => {
           marginBottom: "16px",
         }}
       >
+        <Button href="/actionsCorrectives">
+          resoudre problemes
+        </Button>
         <Button
           variant="contained"
           color="primary"

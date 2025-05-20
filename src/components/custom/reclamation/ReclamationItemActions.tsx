@@ -13,6 +13,7 @@ import ConfirmationModal from "../../common/ConfirmationModal";
 import ReclamationForm from "./ReclamationForm";
 import { ReclamationType } from "../../../services/reclamations/types";
 import getReclamationById from "../../../services/reclamations/getReclamationById";
+import useUserRole from "../../../hooks/useUserRole";
 
 type Props = {
   onDelete: (id: string) => void; // Correction ici
@@ -35,6 +36,8 @@ export default function ReclamationItemActions({
     {} as ReclamationType
   );
   const [openSnackbar, setOpenSnackbar] = useState(false); // Pour Snackbar success
+  const { isAdmin, isTechnicien, isComptable } = useUserRole();
+
 
   useEffect(() => {
     if (!updateModalOpen) return;
@@ -60,13 +63,17 @@ export default function ReclamationItemActions({
   return (
     <>
       <Stack direction="row" spacing={1}>
-        <IconButton color="warning" onClick={() => setUpdateModalOpen(true)}>
-          <Edit />
-        </IconButton>
-        <IconButton color="error" onClick={() => setDeleteModalOpen(true)}>
-          <Delete />
-        </IconButton>
-      </Stack>
+  {(isAdmin || isTechnicien || isComptable) && (
+    <IconButton color="warning" onClick={() => setUpdateModalOpen(true)}>
+      <Edit />
+    </IconButton>
+  )}
+  {(isAdmin || isTechnicien || isComptable) && (
+    <IconButton color="error" onClick={() => setDeleteModalOpen(true)}>
+      <Delete />
+    </IconButton>
+  )}
+</Stack>
 
       <ConfirmationModal
         open={deleteModalOpen}
