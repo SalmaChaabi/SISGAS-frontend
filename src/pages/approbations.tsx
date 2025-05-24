@@ -16,12 +16,15 @@ import { Add } from "@mui/icons-material";
 import ApprobationForm from "../components/custom/approbation/ApprobationForm";
 import { ApprobationType } from "../services/approbation";
 import useUserRole from "../hooks/useUserRole";
+import { useSession } from "../SessionContext";
+import { Navigate } from "react-router";
 
 function Approbations() {
   const [approbations, setApprobations] = useState<ApprobationType[]>([]);
   const [openFormModal, setOpenFormModal] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
-  const { isTechnicien } = useUserRole();
+  const { isTechnicien, isComptable, isFournisseur } = useUserRole();
+  const { session } = useSession();
   // Charger toutes les approbations
   useEffect(() => {
     const fetchApprobations = async () => {
@@ -102,7 +105,9 @@ function Approbations() {
       alert(`Erreur: ${error.message || "Problème de connexion au serveur"}`);
     }
   };
-
+  if (session && (isFournisseur || isComptable)) {
+    return <Navigate to="/" />;
+  }
   return (
     <Box sx={{ p: 3 }}>
       {/* Bouton Ajouter */}

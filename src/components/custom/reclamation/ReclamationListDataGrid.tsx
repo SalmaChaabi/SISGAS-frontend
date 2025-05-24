@@ -46,7 +46,7 @@ export default function ReclamationListDataGrid({
     ActionCorrectiveType[]
   >([]);
   const printRef = useRef(null);
-  const { isAdmin, isTechnicien, isComptable } = useUserRole();
+  const { isAdmin, isTechnicien, isComptable ,isFournisseur } = useUserRole();
 
 
   const handleViewActions = (actions: ActionCorrectiveType[]) => {
@@ -264,9 +264,13 @@ const handleExportPDF = () => {
           marginBottom: "16px",
         }}
       >
-        <Button href="/actionsCorrectives">
-          resoudre problemes
-        </Button>
+       {(isAdmin || isFournisseur) && (
+  <Button href="/actionsCorrectives">
+    résoudre problèmes
+  </Button>
+)}
+
+
         <Button
           variant="contained"
           color="primary"

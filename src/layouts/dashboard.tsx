@@ -85,6 +85,13 @@ export default function Layout() {
       icon: <ReportProblemIcon />,
     },
     // { segment: "actionsCorrectives", title: "Actions Correctives", icon: <BuildIcon /> },
+
+    {
+      segment: "chatbot",
+      title: "Chatbot",
+      icon: <SmartToyIcon />,
+    },
+
     {
       segment: "notifications",
       title: "Notifications",

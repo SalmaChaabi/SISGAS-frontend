@@ -16,10 +16,16 @@ import { useEffect, useState, useCallback } from "react";
 import debounce from "lodash.debounce";
 import { getAllUsers, User } from "../services/users/getAllUsers";
 import { searchUsersByName } from "../services/users/searchUsersByName";
-import { addUser as addUserService, AddUserParam } from "../services/users/addUser";
+import {
+  addUser as addUserService,
+  AddUserParam,
+} from "../services/users/addUser";
 import { updateUser } from "../services/users/updateUser";
 import UserList from "../components/custom/user/UserListDataGrid";
 import Signup from "../components/custom/user/UserForm";
+import { Navigate } from "react-router";
+import useUserRole from "../hooks/useUserRole";
+import { useSession } from "../SessionContext";
 
 const UsersPage = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -27,6 +33,8 @@ const UsersPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: "" });
+  const { isAdmin } = useUserRole();
+  const { session } = useSession();
 
   const fetchAllUsers = async () => {
     setLoading(true);
@@ -86,6 +94,17 @@ const UsersPage = () => {
     fetchAllUsers();
   }, []);
 
+  if (loading) {
+    return (
+      <Box display="flex" justifyContent="center" mt={5}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+  if (session && !isAdmin) {
+    //redirect to not found
+    return <Navigate to="/" replace />;
+  }
   return (
     <Stack spacing={3} sx={{ p: 3, maxWidth: "100%" }}>
       <Typography variant="h5" fontWeight="bold" gutterBottom>
@@ -93,7 +112,9 @@ const UsersPage = () => {
       </Typography>
 
       {/* Recherche positionnée à gauche, sans couleur de fond */}
-      <Box sx={{ display: "flex", justifyContent: "flex-start", width: "100%" }}>
+      <Box
+        sx={{ display: "flex", justifyContent: "flex-start", width: "100%" }}
+      >
         <TextField
           label="Rechercher"
           placeholder="Nom"
@@ -143,36 +164,35 @@ const UsersPage = () => {
 
       {/* Bouton d'ajout utilisateur avec un effet de survol */}
       <Stack direction="row" justifyContent="flex-end" mt={2}>
-      <Button
-  variant="contained"
-  onClick={() => setDialogOpen(true)}
-  sx={{
-    borderRadius: 50,
-    paddingX: 4,
-    paddingY: 1.5,
-    fontWeight: 'bold',
-    fontSize: '1rem',
-    color: '#fff',
-    background: 'linear-gradient(135deg, #6a11cb, #2575fc)', // Violet vers bleu
-    backgroundSize: '300% 300%',
-    animation: 'gradientFlow 6s ease infinite',
-    boxShadow: '0 8px 20px rgba(106, 17, 203, 0.3)',
-    textTransform: 'none',
-    transition: 'transform 0.4s ease, box-shadow 0.4s ease',
-    '&:hover': {
-      transform: 'scale(1.07)',
-      boxShadow: '0 10px 30px rgba(37, 117, 252, 0.5)',
-    },
-    '@keyframes gradientFlow': {
-      '0%': { backgroundPosition: '0% 50%' },
-      '50%': { backgroundPosition: '100% 50%' },
-      '100%': { backgroundPosition: '0% 50%' },
-    },
-  }}
->
-  Créer un compte utilisateur
-</Button>
-
+        <Button
+          variant="contained"
+          onClick={() => setDialogOpen(true)}
+          sx={{
+            borderRadius: 50,
+            paddingX: 4,
+            paddingY: 1.5,
+            fontWeight: "bold",
+            fontSize: "1rem",
+            color: "#fff",
+            background: "linear-gradient(135deg, #6a11cb, #2575fc)", // Violet vers bleu
+            backgroundSize: "300% 300%",
+            animation: "gradientFlow 6s ease infinite",
+            boxShadow: "0 8px 20px rgba(106, 17, 203, 0.3)",
+            textTransform: "none",
+            transition: "transform 0.4s ease, box-shadow 0.4s ease",
+            "&:hover": {
+              transform: "scale(1.07)",
+              boxShadow: "0 10px 30px rgba(37, 117, 252, 0.5)",
+            },
+            "@keyframes gradientFlow": {
+              "0%": { backgroundPosition: "0% 50%" },
+              "50%": { backgroundPosition: "100% 50%" },
+              "100%": { backgroundPosition: "0% 50%" },
+            },
+          }}
+        >
+          Créer un compte utilisateur
+        </Button>
       </Stack>
 
       {/* Liste des utilisateurs */}
@@ -186,7 +206,6 @@ const UsersPage = () => {
 
       {/* Dialogue pour la création d'un utilisateur */}
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-      
         <DialogContent>
           <Signup onSubmit={addUser} />
         </DialogContent>
@@ -204,14 +223,3 @@ const UsersPage = () => {
 };
 
 export default UsersPage;
-
-
-
-
-
-
-
-
-
-
-

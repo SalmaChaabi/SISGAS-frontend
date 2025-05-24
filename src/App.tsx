@@ -14,6 +14,8 @@ export default function App() {
     null
   ); 
 
+  
+
   const setSession = (session: Session | null) => {
     setSessionState(session);
     if (session !== null) {

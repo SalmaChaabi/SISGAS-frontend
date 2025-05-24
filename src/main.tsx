@@ -13,6 +13,7 @@ import Reclamations from "./pages/reclamations";
 import ActionsCorrectives from './pages/actionsCorrectives';
 import { Notifications } from "@mui/icons-material";
 import NotificationsPage from "./pages/notifications";
+import Chatbot from "./pages/Chatbot";
 
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -29,7 +30,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <Route path="/reclamations" element={<Reclamations />} />
             <Route path="/actionsCorrectives" element={<ActionsCorrectives/>} />
             <Route path="/notifications" element={<NotificationsPage />} />
-
+           <Route path="/chatbot" element={<Chatbot />} />
 
           </Route>
           

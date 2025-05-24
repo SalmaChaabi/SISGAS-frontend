@@ -25,6 +25,8 @@ import ValiderModal from "../components/custom/facture/ValiderModal";
 import VerifierModal from "../components/custom/facture/VerifierModal";
 import ConfirmationModal from "../components/common/ConfirmationModal";
 import useUserRole from "../hooks/useUserRole";
+import { useSession } from "../SessionContext";
+import { Navigate } from "react-router";
 
 // Type de facture
 interface Facture {
@@ -70,7 +72,8 @@ const Factures = () => {
     message: "",
     type: "success" as "success" | "error" | "warning" | "info",
   });
-  const { isComptable } = useUserRole();
+  const { isComptable, isFournisseur, isTechnicien } = useUserRole();
+  const { session } = useSession();
   const [openModal, setOpenModal] = useState(false);
   const [selectedFactureId, setSelectedFactureId] = useState<string | null>(
     null
@@ -232,7 +235,9 @@ const Factures = () => {
   useEffect(() => {
     fetchFactures();
   }, []);
-
+  if (session && (isFournisseur || isTechnicien)) {
+    return <Navigate to="/" />;
+  }
   return (
     <Box p={4}>
       <Typography variant="h5" gutterBottom>
