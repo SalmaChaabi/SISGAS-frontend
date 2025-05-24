@@ -14,7 +14,6 @@ import {
 import { useState, useEffect } from "react";
 import { ReclamationType } from "../../../services/reclamations/types";
 import getAllStatutsReclamation from "../../../services/reclamations/getAllStatutsReclamation";
-import { getAllRoles } from "../../../services/users/getAllRoles";
 
 type Props = {
   onSubmit: (data: ReclamationType) => void;
@@ -30,8 +29,6 @@ export default function ReclamationForm({
   onCancel,
 }: Props) {
   const [formData, setFormData] = useState<Partial<ReclamationType>>({});
-  const [statuts, setStatuts] = useState<any[]>([]);
-  const [roles, setRoles] = useState<any[]>([]);
 
   const handleChange =
     (field: keyof ReclamationType) =>
@@ -56,8 +53,6 @@ export default function ReclamationForm({
     const requiredFields = {
       titre: "Titre",
       description: "Description",
-      statut: "Statut",
-      utilisateur: "Utilisateur",
     };
 
     for (const [key, label] of Object.entries(requiredFields)) {
@@ -77,16 +72,9 @@ export default function ReclamationForm({
   useEffect(() => {
     const fetchData = async () => {
       const statutsData = await getAllStatutsReclamation();
-      const rolesData = await getAllRoles();
 
-      // Vérifie si rolesData contient bien un tableau sous la propriété 'data'
-      if (rolesData.success && Array.isArray(rolesData.data)) {
-        setRoles(rolesData.data); // Utilise les données retournées dans 'data'
-      } else {
-        console.error("Erreur: rolesData n'est pas un tableau valide.");
-      }
+    
 
-      setStatuts(statutsData);
     };
 
     fetchData();
@@ -116,25 +104,8 @@ export default function ReclamationForm({
               rows={3}
             />
           </Grid>
-          <Grid size={12}>
-            <TextField
-              label="Utilisateur"
-              value={formData.utilisateur || ""}
-              onChange={handleChange("utilisateur")}
-              required
-              fullWidth
-            />
-          </Grid>
-        <Grid size={6}>
-          <TextField
-            label="Date de Création"
-            type="date"
-            InputLabelProps={{ shrink: true }}
-            value={formData.dateCreation || ""}
-            onChange={handleChange("dateCreation")}
-            fullWidth
-          />
-        </Grid>
+          
+       
         <Grid size={6}>
           <TextField
             label="Date de Résolution"
@@ -155,42 +126,10 @@ export default function ReclamationForm({
             rows={3}
           />
         </Grid>
-        <Grid size={6}>
-          {/* Statut */}
-          <FormControl fullWidth required>
-            <InputLabel>Statut</InputLabel>
-            <Select
-              value={formData.statut || ""}
-              onChange={handleSelectChange("statut")}
-              label="Statut"
-            >
-              {statuts.map((statut) => (
-                <MenuItem key={statut._id} value={statut._id}>
-                  {statut.nom}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Grid>
+        
         <Grid size={6}>
           {/* Rôle */}
-          <FormControl fullWidth>
-            <InputLabel>Rôle</InputLabel>
-            <Select
-              value={formData.role || ""}
-              onChange={handleSelectChange("role")}
-              label="Rôle"
-            >
-              {roles.map((role) => (
-                <MenuItem key={role._id} value={role._id}>
-                  {role.name}{" "}
-                  {/* Assure-toi d'utiliser 'name' au lieu de 'nom' si c'est bien le champ */}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid size={12}>
+         
           {/* Fournisseur Intervenu */}
           <FormControlLabel
             control={
