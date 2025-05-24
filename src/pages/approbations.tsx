@@ -89,7 +89,7 @@ function Approbations() {
       }
 
       if (response.success) {
-        setApprobations((prev) => [...prev, response.data]);
+        setApprobations((prev) => [...prev, response.data.approbation]);
         setOpenFormModal(false);
         setOpenSnackbar(true);
       } else {

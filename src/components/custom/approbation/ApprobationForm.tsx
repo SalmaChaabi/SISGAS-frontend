@@ -31,8 +31,7 @@ const ApprobationForm = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  const today = new Date().toISOString().split("T")[0];
-  const minDate = "2020-01-01";
+  
 
   const handleChange =
     (field: keyof ApprobationType) =>
@@ -42,14 +41,12 @@ const ApprobationForm = ({
     };
 
   const validateGPS = (value: string) => gpsRegex.test(value.trim());
-  const validateDate = (value: string) =>
-    value >= minDate && value <= today;
+ 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const requiredFields: (keyof ApprobationType)[] = [
-      "date_approbation",
       "nom_antenne",
       "puissance_antenne",
       "couple_frequence",
@@ -67,9 +64,6 @@ const ApprobationForm = ({
         hasError = true;
       } else if (field === "position_GPS" && !validateGPS(value)) {
         newErrors[field] = "Format invalide (ex: 36.8065, 10.1815)";
-        hasError = true;
-      } else if (field === "date_approbation" && !validateDate(value)) {
-        newErrors[field] = `Date entre ${minDate} et aujourd'hui`;
         hasError = true;
       }
     }
@@ -89,7 +83,6 @@ const ApprobationForm = ({
 
   useEffect(() => {
     setFormData({
-      date_approbation: defaultData.date_approbation || "",
       nom_antenne: defaultData.nom_antenne || "",
       puissance_antenne: defaultData.puissance_antenne || "",
       couple_frequence: defaultData.couple_frequence || "",
@@ -129,35 +122,8 @@ const ApprobationForm = ({
           </Stack>
 
           <Stack spacing={3}>
-            <TextField
-              label="Date Approbation"
-              type="date"
-              value={formData.date_approbation || ""}
-              onChange={handleChange("date_approbation")}
-              InputLabelProps={{ 
-                shrink: true,
-                style: { color: "#000000" } 
-              }}
-              inputProps={{ 
-                min: minDate, 
-                max: today,
-                style: { color: "#000000" } 
-              }}
-              error={!!errors.date_approbation}
-              helperText={errors.date_approbation}
-              fullWidth
-              required
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "#32CD32",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "#FF69B4",
-                  },
-                },
-              }}
-            />
+            
+            
             <TextField
               label="Nom Antenne"
               value={formData.nom_antenne || ""}
@@ -190,6 +156,7 @@ const ApprobationForm = ({
               error={!!errors.puissance_antenne}
               helperText={errors.puissance_antenne}
               fullWidth
+              type="number"
               required
               sx={{
                 "& .MuiOutlinedInput-root": {
