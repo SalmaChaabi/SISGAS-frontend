@@ -5,11 +5,11 @@ import { ActionCorrectiveType } from "../../../services/actionsCorrectives/types
 interface Props {
   onSubmit: (data: ActionCorrectiveType) => void;
   defaultData: ActionCorrectiveType;
-  submitLabel: string;
-  statuts: any[]; 
+  submitLabel?: string;
+  statuts?: any[]; 
 }
 
-export default function ActionCorrectiveForm({ onSubmit, defaultData, submitLabel, statuts }: Props) {
+export default function ActionCorrectiveForm({ onSubmit, defaultData, submitLabel }: Props) {
   const [formData, setFormData] = useState<ActionCorrectiveType>(defaultData);
 
   React.useEffect(() => {
@@ -23,9 +23,7 @@ export default function ActionCorrectiveForm({ onSubmit, defaultData, submitLabe
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSelectChange = (e: SelectChangeEvent<string>) => {
-    setFormData({ ...formData, statutReclamation: e.target.value });
-  };
+  
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,29 +39,9 @@ export default function ActionCorrectiveForm({ onSubmit, defaultData, submitLabe
         onChange={handleChange}
         required
       />
-      <TextField
-        name="reclamation"
-        label="Réclamation"
-        value={formData.reclamation}
-        onChange={handleChange}
-        required
-      />
-      <FormControl required>
-        <InputLabel>Statut Réclamation</InputLabel>
-        <Select
-          name="statutReclamation"
-          value={formData.statutReclamation}
-          onChange={handleSelectChange}
-          label="Statut Réclamation"
-        >
-          {statuts.map((statut) => (
-            <MenuItem key={statut._id} value={statut.nom}>
-              {statut.nom}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <TextField
+
+      
+      {/* <TextField
         name="dateAction"
         label="Date Action"
         type="date"
@@ -73,7 +51,7 @@ export default function ActionCorrectiveForm({ onSubmit, defaultData, submitLabe
           shrink: true,
         }}
         required
-      />
+      /> */}
       <Button type="submit" variant="contained">
         {submitLabel}
       </Button>

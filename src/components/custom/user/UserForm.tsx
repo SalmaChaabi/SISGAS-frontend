@@ -238,6 +238,20 @@ const UserForm = ({ onSubmit, defaultData, submitLabel }: UserFormProps) => {
           {submitLabel ?? "Soumettre"}
         </Button>
 
+        {error && isFormError && (
+          <Typography
+            color="error"
+            sx={{
+              textAlign: "center",
+              fontWeight: "medium",
+              fontSize: "1rem",
+              mt: 2,
+            }}
+          >
+            Veuillez remplir tous les champs obligatoires.
+          </Typography>
+        )}
+
         {response && (
           <Typography
             color={response.success ? "success.main" : "error.main"}
@@ -257,6 +271,7 @@ const UserForm = ({ onSubmit, defaultData, submitLabel }: UserFormProps) => {
 };
 
 export default UserForm;
+
 
 
 

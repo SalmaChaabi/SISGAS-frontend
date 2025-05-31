@@ -2,15 +2,23 @@
 
 import { ActionCorrectiveType } from "./types";
 
-const createActionCorrective = async (actionCorrective: ActionCorrectiveType) => {
+
+const createActionCorrective = async (
+  utilisateur: string,
+  reclamation: string,
+  actionCorrective: ActionCorrectiveType
+) => {
   try {
-    const response = await fetch("http://localhost:5001/actionCorrective/createActionCorrective", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(actionCorrective),
-    });
+    const response = await fetch(
+      "http://localhost:5001/actionCorrective/createActionCorrective",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...actionCorrective, utilisateur, reclamation }),
+      }
+    );
 
     const data = await response.json();
 

@@ -14,6 +14,7 @@ import ActionsCorrectives from './pages/actionsCorrectives';
 import { Notifications } from "@mui/icons-material";
 import NotificationsPage from "./pages/notifications";
 import Chatbot from "./pages/Chatbot";
+import ResetPassword from "./pages/ResetPassword";
 
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -38,6 +39,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           
 
           <Route path="/sign-in" element={<SignInPage />} />
+           <Route path="/reset-password" element={<ResetPassword />} />
+
         </Route>
       </Routes>
     </BrowserRouter>

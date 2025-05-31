@@ -2,6 +2,7 @@
 
 import { ActionCorrectiveType } from "./types";
 
+
 const getAllActionsCorrectives = async (): Promise<ActionCorrectiveType[]> => {
   try {
     const response = await fetch("http://localhost:5001/actionCorrective/getAllActionsCorrectives"); // route backend

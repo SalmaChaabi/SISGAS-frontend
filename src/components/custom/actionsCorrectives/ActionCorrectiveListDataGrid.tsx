@@ -7,10 +7,10 @@ import {
 } from "@mui/x-data-grid";
 import { Button, Box, Modal, Typography } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
-import { ActionCorrectiveType } from "../../../services/actionsCorrectives/types";
 import ConfirmationModal from "../../common/ConfirmationModal";
 import ActionCorrectiveForm from "./ActionCorrectiveForm"; // ⚠️ Assure-toi du bon chemin
 import { motion } from "framer-motion";
+import { ActionCorrectiveType } from "../../../services/actionsCorrectives/types";
 
 interface Props {
   data: ActionCorrectiveType[];

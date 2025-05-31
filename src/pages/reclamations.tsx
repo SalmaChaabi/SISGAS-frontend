@@ -154,11 +154,9 @@ function Reclamations() {
       <Stack direction="row" spacing={2} mb={3} flexWrap="wrap">
         {[
           { label: "Total Réclamations", count: reclamations.length, color: "#6a1b9a" },
-          { label: "Réclamations en cours", count: statusCount("en cours"), color: "#ff9800" },
           { label: "Réclamations Résolues", count: statusCount("résolu"), color: "#4caf50" },
           { label: "Réclamations Escaladée", count: statusCount("escaladée"), color: "#e53935" },
           { label: "Réclamations Envoyée", count: statusCount("envoyée"), color: "#2196f3" },
-          { label: "Réclamations Rejeté", count: statusCount("rejeté"), color: "#9e9e9e" },
         ].map((item, index) => (
           <motion.div
             key={item.label}
@@ -189,10 +187,8 @@ function Reclamations() {
           <InputLabel>Filtrer par statut</InputLabel>
           <Select value={statusFilter} label="Filtrer par statut" onChange={handleFilterChange}>
             <MenuItem value="">Tous</MenuItem>
-            <MenuItem value="en cours">En cours</MenuItem>
             <MenuItem value="résolu">Résolu</MenuItem>
             <MenuItem value="escaladée">Escaladée</MenuItem>
-            <MenuItem value="rejeté">Rejeté</MenuItem>
             <MenuItem value="envoyée">Envoyée</MenuItem>
 
           </Select>

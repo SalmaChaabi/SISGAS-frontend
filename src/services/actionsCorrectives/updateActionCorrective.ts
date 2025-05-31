@@ -2,6 +2,7 @@
 
 import { ActionCorrectiveType } from "./types";
 
+
 const updateActionCorrective = async (id: string, updatedData: ActionCorrectiveType) => {
   try {
     const response = await fetch(`http://localhost:5001/actionCorrective/updateActionCorrective/${id}`, {

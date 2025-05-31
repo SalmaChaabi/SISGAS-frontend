@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Box, Button, Dialog, DialogContent, Snackbar, Alert } from "@mui/material";
 import { Add } from "@mui/icons-material";
-import { ActionCorrectiveType } from "../services/actionsCorrectives/types";
 import getAllActionsCorrectives from "../services/actionsCorrectives/getAllActionsCorrectives";
 import createActionCorrective from "../services/actionsCorrectives/createActionCorrective";
 import updateActionCorrective from "../services/actionsCorrectives/updateActionCorrective";
@@ -10,6 +9,7 @@ import ActionCorrectiveListDataGrid from "../components/custom/actionsCorrective
 import ActionCorrectiveForm from "../components/custom/actionsCorrectives/ActionCorrectiveForm";
 import getAllStatutsReclamation from "../services/reclamations/getAllStatutsReclamation";
 import { useSession } from "../SessionContext";
+import { ActionCorrectiveType } from "../services/actionsCorrectives/types";
 
 function ActionCorrectivesPage() {
   const [actionsCorrectives, setActionsCorrectives] = useState<ActionCorrectiveType[]>([]);

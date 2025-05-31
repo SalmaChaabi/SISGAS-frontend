@@ -9,6 +9,7 @@ import {
   ListItem,
   ListItemText,
   Button,
+  Stack,
 } from "@mui/material";
 import { useState, useRef } from "react";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -17,172 +18,166 @@ import PrintIcon from "@mui/icons-material/Print";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { ReclamationType } from "../../../services/reclamations/types";
-import { ActionCorrectiveType } from "../../../services/reclamations/ActionCorrectiveType";
 import useUserRole from "../../../hooks/useUserRole";
-
-
-
+import ActionCorrectiveDialog from "../actionsCorrectives/ActionCorrectiveDialog";
+import { ActionCorrectiveType } from "../../../services/actionsCorrectives/types";
 
 type Props = {
   data: ReclamationType[];
-
   onDelete: (id: string) => void;
   onUpdate: (
     id: string,
     data: ReclamationType
   ) => Promise<{ success: boolean; message: string; data: any }>;
   getStatusIcon: (status: string) => React.ReactElement;
-
 };
 
 export default function ReclamationListDataGrid({
   data,
   onDelete,
   onUpdate,
-  
 }: Props) {
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectedActions, setSelectedActions] = useState<
-    ActionCorrectiveType[]
-  >([]);
+  const [selectedActions, setSelectedActions] = useState<ActionCorrectiveType[]>(
+    []
+  );
   const printRef = useRef(null);
-  const { isAdmin, isTechnicien, isComptable ,isFournisseur } = useUserRole();
-
+  const { isAdmin, isTechnicien, isComptable, isFournisseur } = useUserRole();
 
   const handleViewActions = (actions: ActionCorrectiveType[]) => {
     setSelectedActions(actions);
     setOpenDialog(true);
   };
 
-const handleExportPDF = () => {
-  const doc = new jsPDF();
-  doc.setFontSize(18);
-  doc.text("Liste des réclamations", 14, 20);
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(18);
+    doc.text("Liste des réclamations", 14, 20);
 
-  const rows = data.map((item) => [
-    item.titre ?? "-",
-    item.description ?? "-",
-    item.dateCreation
-      ? new Date(item.dateCreation).toLocaleDateString("fr-FR")
-      : "-",
-    item.dateResolution
-      ? new Date(item.dateResolution).toLocaleDateString("fr-FR")
-      : "-",
-    item.Commentaireutilisateur ?? "-",
-    item.fournisseurIntervenu ? "Oui" : "Non",
-    item.statut?.nom ?? "-",
-    item.utilisateur
-      ? `${item.utilisateur.firstName} ${item.utilisateur.lastName}`
-      : "-",
-    item.role?.name ?? "-",
-    item.actionsCorrectives?.length || 0,
-  ]);
+    const rows = data.map((item) => [
+      item.titre ?? "-",
+      item.description ?? "-",
+      item.dateCreation
+        ? new Date(item.dateCreation).toLocaleDateString("fr-FR")
+        : "-",
+      item.dateResolution
+        ? new Date(item.dateResolution).toLocaleDateString("fr-FR")
+        : "-",
+      item.Commentaireutilisateur ?? "-",
+      item.fournisseurIntervenu ? "Oui" : "Non",
+      item.statut?.nom ?? "-",
+      item.utilisateur
+        ? `${item.utilisateur.firstName} ${item.utilisateur.lastName}`
+        : "-",
+      item.role?.name ?? "-",
+      item.actionsCorrectives?.length || 0,
+    ]);
 
-  autoTable(doc, {
-    startY: 30,
-    head: [
-      [
-        "Titre",
-        "Description",
-        "Date Création",
-        "Date Résolution",
-        "Commentaire de l'utilisateur",
-        "Fournisseur Intervenu",
-        "Statut",
-        "Utilisateur",
-        "Rôle",
-        "Nb. Actions Correctives",
+    autoTable(doc, {
+      startY: 30,
+      head: [
+        [
+          "Titre",
+          "Description",
+          "Date Création",
+          "Date Résolution",
+          "Commentaire de l'utilisateur",
+          "Fournisseur Intervenu",
+          "Statut",
+          "Utilisateur",
+          "Rôle",
+          "Nb. Actions Correctives",
+        ],
       ],
-    ],
-    body: rows,
-  });
+      body: rows,
+    });
 
-  doc.save("liste-des-reclamations.pdf");
-};
+    doc.save("liste-des-reclamations.pdf");
+  };
 
   const handlePrintTable = () => {
-  const tableHTML = `
-    <html>
-      <head>
-        <title>Liste des réclamations</title>
-        <style>
-          table {
-            width: 100%;
-            border-collapse: collapse;
-            font-family: Arial, sans-serif;
-          }
-          th, td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            text-align: left;
-          }
-          th {
-            background-color: #f5f5f5;
-          }
-        </style>
-      </head>
-      <body>
-        <h2>Liste des réclamations</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Titre</th>
-              <th>Description</th>
-              <th>Date Création</th>
-              <th>Date Résolution</th>
-              <th>Commentaire de l'utilisateur</th>
-              <th>Fournisseur Intervenu</th>
-              <th>Statut</th>
-              <th>Utilisateur</th>
-              <th>Rôle</th>
-              <th>Nb. Actions Correctives</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${data
-              .map(
-                (item) => `
+    const tableHTML = `
+      <html>
+        <head>
+          <title>Liste des réclamations</title>
+          <style>
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              font-family: Arial, sans-serif;
+            }
+            th, td {
+              border: 1px solid #ccc;
+              padding: 8px;
+              text-align: left;
+            }
+            th {
+              background-color: #f5f5f5;
+            }
+          </style>
+        </head>
+        <body>
+          <h2>Liste des réclamations</h2>
+          <table>
+            <thead>
               <tr>
-                <td>${item.titre ?? "-"}</td>
-                <td>${item.description ?? "-"}</td>
-                <td>${
-                  item.dateCreation
-                    ? new Date(item.dateCreation).toLocaleDateString("fr-FR")
-                    : "-"
-                }</td>
-                <td>${
-                  item.dateResolution
-                    ? new Date(item.dateResolution).toLocaleDateString("fr-FR")
-                    : "-"
-                }</td>
-                <td>${item.Commentaireutilisateur ?? "-"}</td>
-                <td>${item.fournisseurIntervenu ? "Oui" : "Non"}</td>
-                <td>${item.statut?.nom ?? "-"}</td>
-                <td>${
-                  item.utilisateur
-                    ? `${item.utilisateur.firstName} ${item.utilisateur.lastName}`
-                    : "-"
-                }</td>
-                <td>${item.role?.name ?? "-"}</td>
-                <td>${item.actionsCorrectives?.length || 0}</td>
+                <th>Titre</th>
+                <th>Description</th>
+                <th>Date Création</th>
+                <th>Date Résolution</th>
+                <th>Commentaire de l'utilisateur</th>
+                <th>Fournisseur Intervenu</th>
+                <th>Statut</th>
+                <th>Utilisateur</th>
+                <th>Rôle</th>
+                <th>Nb. Actions Correctives</th>
               </tr>
-            `
-              )
-              .join("")}
-          </tbody>
-        </table>
-      </body>
-    </html>
-  `;
+            </thead>
+            <tbody>
+              ${data
+                .map(
+                  (item) => `
+                <tr>
+                  <td>${item.titre ?? "-"}</td>
+                  <td>${item.description ?? "-"}</td>
+                  <td>${
+                    item.dateCreation
+                      ? new Date(item.dateCreation).toLocaleDateString("fr-FR")
+                      : "-"
+                  }</td>
+                  <td>${
+                    item.dateResolution
+                      ? new Date(item.dateResolution).toLocaleDateString("fr-FR")
+                      : "-"
+                  }</td>
+                  <td>${item.Commentaireutilisateur ?? "-"}</td>
+                  <td>${item.fournisseurIntervenu ? "Oui" : "Non"}</td>
+                  <td>${item.statut?.nom ?? "-"}</td>
+                  <td>${
+                    item.utilisateur
+                      ? `${item.utilisateur.firstName} ${item.utilisateur.lastName}`
+                      : "-"
+                  }</td>
+                  <td>${item.role?.name ?? "-"}</td>
+                  <td>${item.actionsCorrectives?.length || 0}</td>
+                </tr>
+              `
+                )
+                .join("")}
+            </tbody>
+          </table>
+        </body>
+      </html>
+    `;
 
-  const printWindow = window.open("", "_blank");
-  if (printWindow) {
-    printWindow.document.open();
-    printWindow.document.write(tableHTML);
-    printWindow.document.close();
-    printWindow.print();
-  }
-};
+    const printWindow = window.open("", "_blank");
+    if (printWindow) {
+      printWindow.document.open();
+      printWindow.document.write(tableHTML);
+      printWindow.document.close();
+      printWindow.print();
+    }
+  };
 
   const columns: GridColDef[] = [
     { field: "titre", headerName: "Titre", flex: 1 },
@@ -204,7 +199,7 @@ const handleExportPDF = () => {
       field: "statut",
       headerName: "Statut",
       flex: 1,
-      valueGetter: (statut:{nom:string}) => statut.nom,
+      valueGetter: (statut: { nom: string }) => statut.nom,
     },
     {
       field: "utilisateur",
@@ -217,42 +212,62 @@ const handleExportPDF = () => {
       field: "role",
       headerName: "Rôle",
       flex: 1,
-      valueGetter: (role:{name:string}) => role.name,
+      valueGetter: (role: { name: string }) => role.name,
     },
     {
       field: "actionsCorrectives",
       headerName: "Actions Correctives",
-      flex: 1.5,
+      minWidth: 200,
+      flex: 2,
       renderCell: (params) => {
         const actions = params.row.actionsCorrectives || [];
         return (
-          <Button
-            variant="contained"
-            size="small"
-            startIcon={<VisibilityIcon />}
-            onClick={() => handleViewActions(actions)}
-          >
-            Voir ({actions.length})
-          </Button>
+          <Stack direction="row" spacing={1}>
+         <Button
+  variant="contained"
+  size="small"
+  startIcon={<VisibilityIcon />}
+  onClick={() => handleViewActions(actions)}
+  sx={{
+    background: "linear-gradient(135deg, rgb(65, 132, 188) 30%, rgb(144, 74, 185) 90%)",
+    color: "#fff",
+    borderRadius: "8px",
+    boxShadow: "0 3px 5px 2px rgba(33, 203, 243, .3)",
+    textTransform: "none",
+    fontWeight: "bold",
+    transition: "all 0.3s ease-in-out",
+    transform: "scale(1)",
+    "&:hover": {
+      background: "linear-gradient(135deg, #1976D2 30%, #00ACC1 90%)",
+      transform: "scale(1.05)",
+      boxShadow: "0 6px 12px 3px rgba(0, 188, 212, 0.4)",
+    },
+  }}
+>
+  Voir ({actions.length})
+</Button>
+
+            <ActionCorrectiveDialog id={params.row._id} />
+          </Stack>
         );
       },
     },
-     ...(isAdmin || isTechnicien || isComptable
-    ? [
-       {
-  field: "actions",
-  headerName: "Actions",
-  width: 150,
-  renderCell: (params: GridRenderCellParams) => (
-    <ReclamationItemActions
-      reclamationId={params.id.toString()}
-      onDelete={() => onDelete(params.id.toString())}
-      onUpdate={onUpdate}
-    />
-  ),
-}
-      ]
-    : []),
+    ...(isAdmin || isTechnicien || isComptable
+      ? [
+          {
+            field: "actions",
+            headerName: "Actions",
+            width: 150,
+            renderCell: (params: GridRenderCellParams) => (
+              <ReclamationItemActions
+                reclamationId={params.id.toString()}
+                onDelete={() => onDelete(params.id.toString())}
+                onUpdate={onUpdate}
+              />
+            ),
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -264,21 +279,18 @@ const handleExportPDF = () => {
           marginBottom: "16px",
         }}
       >
-       {(isAdmin || isFournisseur) && (
-  <Button href="/actionsCorrectives">
-    résoudre problèmes
-  </Button>
-)}
-
+        {(isAdmin || isFournisseur) && (
+          <Button href="/actionsCorrectives">résoudre problèmes</Button>
+        )}
 
         <Button
           variant="contained"
           color="primary"
           onClick={handleExportPDF}
           sx={{
-            backgroundColor: "#3f51b5", // Bleu standard
+            backgroundColor: "#3f51b5",
             "&:hover": {
-              backgroundColor: "#303f9f", // Bleu plus foncé au survol
+              backgroundColor: "#303f9f",
             },
             fontWeight: "bold",
             padding: "10px 20px",
@@ -295,9 +307,9 @@ const handleExportPDF = () => {
           color="secondary"
           onClick={handlePrintTable}
           sx={{
-            backgroundColor: "#4CAF50", // Vert
+            backgroundColor: "#4CAF50",
             "&:hover": {
-              backgroundColor: "#388E3C", // Vert foncé au survol
+              backgroundColor: "#388E3C",
             },
             fontWeight: "bold",
             padding: "10px 20px",
@@ -385,3 +397,4 @@ const handleExportPDF = () => {
     </>
   );
 }
+

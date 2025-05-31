@@ -487,7 +487,7 @@ const WelcomePage = () => {
             >
               <iframe
                 title="Maintenova Location"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3190.266702220574!2d10.182636175697763!3d36.81016407101907!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1302fd298b1752b5%3A0x99988cf30a82f313!2sSi%C3%A8ge%20Maintenova!5e0!3m2!1sfr!2stn!4v1715712002000!5m2!1sfr!2stn"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3190.266702220574!2d10.182636175697763!3d36.81016407101907!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1302fd298b1752b5%3A0x99988cf30a82f313!2sSi%C3%A8ge%20Maintenova!5e0!3m2!1sfr!2stn!4v1715712002000!5m2!1sfr!2stn,Agence Nationale des Fréquences الوكالة الوطنية للترددات"
                 width="100%"
                 height="150"
                 style={{ border: 0 }}
