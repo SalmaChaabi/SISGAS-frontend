@@ -15,6 +15,7 @@ import { Notifications } from "@mui/icons-material";
 import NotificationsPage from "./pages/notifications";
 import Chatbot from "./pages/Chatbot";
 import ResetPassword from "./pages/ResetPassword";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -33,6 +34,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <Route path="/notifications" element={<NotificationsPage />} />
            <Route path="/chatbot" element={<Chatbot />} />
 
+
           </Route>
           
 
@@ -40,6 +42,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 
           <Route path="/sign-in" element={<SignInPage />} />
            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+
 
         </Route>
       </Routes>

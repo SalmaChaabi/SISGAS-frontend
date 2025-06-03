@@ -30,9 +30,13 @@ const Transition = React.forwardRef(function Transition(
 
 type ActionCorrectiveDialogProps = {
   id: string;
+  onResoudre: (id: string, action: any) => void;
 };
 
-const ActionCorrectiveDialog: React.FC<ActionCorrectiveDialogProps> = ({ id }) => {
+const ActionCorrectiveDialog: React.FC<ActionCorrectiveDialogProps> = ({
+  id,
+  onResoudre
+}) => {
   const [open, setOpen] = useState(false);
   const [description, setDescription] = useState("");
   const [snackbar, setSnackbar] = useState<{
@@ -50,41 +54,40 @@ const ActionCorrectiveDialog: React.FC<ActionCorrectiveDialogProps> = ({ id }) =
     setOpen(false);
   };
 
-  const handleSnackbarClose = () =>
-    setSnackbar({ ...snackbar, open: false });
+  const handleSnackbarClose = () => setSnackbar({ ...snackbar, open: false });
 
   const handleCreate = async () => {
     if (!userId) return;
 
     const newData: ActionCorrectiveType = { description };
+    onResoudre(id, newData);
+     handleClose();
 
-    try {
-      const response = await createActionCorrective(userId, id, newData);
-      if (response.success && response.data) {
-        setSnackbar({
-          open: true,
-          message: "Action corrective ajoutée avec succès.",
-          severity: "success",
-        });
-        handleClose();
-      } else {
-        setSnackbar({
-          open: true,
-          message: "Échec de l'ajout de l'action corrective.",
-          severity: "error",
-        });
-      }
-    } catch (error) {
-      console.error("Erreur lors de la création :", error);
-      setSnackbar({
-        open: true,
-        message: "Une erreur est survenue.",
-        severity: "error",
-      });
-    }
+    // try {
+    //   const response = await createActionCorrective(userId, id, newData);
+    //   if (response.success && response.data) {
+    //     setSnackbar({
+    //       open: true,
+    //       message: "Action corrective ajoutée avec succès.",
+    //       severity: "success",
+    //     });
+    //     handleClose();
+    //   } else {
+    //     setSnackbar({
+    //       open: true,
+    //       message: "Échec de l'ajout de l'action corrective.",
+    //       severity: "error",
+    //     });
+    //   }
+    // } catch (error) {
+    //   console.error("Erreur lors de la création :", error);
+    //   setSnackbar({
+    //     open: true,
+    //     message: "Une erreur est survenue.",
+    //     severity: "error",
+    //   });
+    // }
   };
-
- 
 
   return (
     <>
@@ -147,7 +150,12 @@ const ActionCorrectiveDialog: React.FC<ActionCorrectiveDialogProps> = ({ id }) =
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
           >
-            <Box component="form" noValidate autoComplete="off" sx={{ mt: 2, px: 1 }}>
+            <Box
+              component="form"
+              noValidate
+              autoComplete="off"
+              sx={{ mt: 2, px: 1 }}
+            >
               <TextField
                 label="Description de l'action"
                 placeholder="Décris l'action corrective à appliquer..."
@@ -229,11 +237,3 @@ const ActionCorrectiveDialog: React.FC<ActionCorrectiveDialogProps> = ({ id }) =
 };
 
 export default ActionCorrectiveDialog;
-
-
-
-
-
-
-
-

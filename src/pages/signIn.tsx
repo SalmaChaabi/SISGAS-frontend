@@ -25,12 +25,15 @@ import { motion } from "framer-motion";
 export default function SignIn() {
   const navigate = useNavigate();
   const { setSession } = useSession();
+
+  // États pour gérer les champs du formulaire
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(""); // Pour afficher les erreurs de connexion
+  const [loading, setLoading] = useState(false); // Pour afficher le spinner
 
+  // Fonction pour afficher un message d'accueil personnalisé selon l'heure
   const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) return "Bonjour";
@@ -38,13 +41,24 @@ export default function SignIn() {
     return "Bonsoir";
   };
 
+  // Fonction appelée lors de la soumission du formulaire
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+    e.preventDefault(); // Empêche le rechargement de la page
+    setError(""); // Réinitialiser les erreurs précédentes
+    setLoading(true); // Activer le spinner
+
+    // Vérifier si les champs sont vides
+    if (!email || !password) {
+      setError("Veuillez remplir tous les champs."); // Affiche une erreur si email ou password vide
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await login(email, password);
+
       if (response.success) {
+        // Enregistrer la session utilisateur si login réussi
         setSession({
           user: {
             id: response.user._id,
@@ -54,17 +68,17 @@ export default function SignIn() {
             role: response.user.role,
             image:
               response.user.user_image ??
-              "https://avatars.githubusercontent.com/u/19550456",
+              "https://avatars.githubusercontent.com/u/19550456", // Avatar par défaut
           },
         });
-        navigate("/", { replace: true });
+        navigate("/", { replace: true }); // Redirection vers l'accueil
       } else {
-        setError("Email ou mot de passe incorrect.");
+        setError("Email ou mot de passe incorrect."); // Erreur de connexion
       }
     } catch (err) {
-      setError("Erreur lors de la connexion.");
+      setError("Erreur lors de la connexion."); // Erreur inattendue (ex: serveur)
     } finally {
-      setLoading(false);
+      setLoading(false); // Désactiver le spinner
     }
   };
 
@@ -120,7 +134,9 @@ export default function SignIn() {
               <span style={{ color: "#1565c0" }}>Maintenova</span>
             </Typography>
 
+            {/* Formulaire de connexion */}
             <Box component="form" onSubmit={handleSubmit} noValidate>
+              {/* Champ email */}
               <TextField
                 margin="normal"
                 fullWidth
@@ -136,6 +152,7 @@ export default function SignIn() {
                   ),
                 }}
               />
+              {/* Champ mot de passe */}
               <TextField
                 margin="normal"
                 fullWidth
@@ -151,6 +168,8 @@ export default function SignIn() {
                   ),
                 }}
               />
+
+              {/* Checkbox se souvenir de moi */}
               <Box display="flex" justifyContent="flex-start">
                 <FormControlLabel
                   control={
@@ -163,24 +182,28 @@ export default function SignIn() {
                   label="Se souvenir de moi"
                 />
               </Box>
+
+              {/* Lien mot de passe oublié */}
               <Box display="flex" justifyContent="flex-end" mb={1}>
                 <Link href="/reset-password" variant="body2">
                   Mot de passe oublié ?
                 </Link>
               </Box>
 
+              {/* Affichage d'une erreur si elle existe */}
               {error && (
                 <Typography color="error" variant="body2" align="center" mb={1}>
                   {error}
                 </Typography>
               )}
 
+              {/* Bouton Se connecter */}
               <motion.div whileHover={{ scale: 1.02 }}>
                 <Button
                   type="submit"
                   fullWidth
                   variant="contained"
-                  disabled={loading}
+                  disabled={loading} // Désactivé quand en chargement
                   endIcon={
                     loading ? (
                       <CircularProgress size={20} color="inherit" />
@@ -213,6 +236,11 @@ export default function SignIn() {
     </Box>
   );
 }
+
+
+
+
+
 
 
 

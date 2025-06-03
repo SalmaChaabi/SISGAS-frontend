@@ -21,10 +21,18 @@ import { ReclamationType } from "../../../services/reclamations/types";
 import useUserRole from "../../../hooks/useUserRole";
 import ActionCorrectiveDialog from "../actionsCorrectives/ActionCorrectiveDialog";
 import { ActionCorrectiveType } from "../../../services/actionsCorrectives/types";
+import ActionCorrectiveItemActions from "../actionsCorrectives/ActionCorrectiveItemActions";
+import deleteActionCorrective from "../../../services/actionsCorrectives/deleteActionCorrective";
+import updateActionCorrective from "../../../services/actionsCorrectives/updateActionCorrective";
 
 type Props = {
   data: ReclamationType[];
+  setActionCorrectives: (
+    idReclamation: string,
+    actions: ActionCorrectiveType[]
+  ) => void;
   onDelete: (id: string) => void;
+  onResoudre: (id: string, action: any) => void;
   onUpdate: (
     id: string,
     data: ReclamationType
@@ -36,11 +44,15 @@ export default function ReclamationListDataGrid({
   data,
   onDelete,
   onUpdate,
+  onResoudre,
+  setActionCorrectives,
 }: Props) {
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectedActions, setSelectedActions] = useState<ActionCorrectiveType[]>(
-    []
-  );
+  const [selectedActions, setSelectedActions] = useState<
+    ActionCorrectiveType[]
+  >([]);
+  const [selectedReclamationId, setSelectedReclamationId] =
+    useState<string>("");
   const printRef = useRef(null);
   const { isAdmin, isTechnicien, isComptable, isFournisseur } = useUserRole();
 
@@ -147,7 +159,9 @@ export default function ReclamationListDataGrid({
                   }</td>
                   <td>${
                     item.dateResolution
-                      ? new Date(item.dateResolution).toLocaleDateString("fr-FR")
+                      ? new Date(item.dateResolution).toLocaleDateString(
+                          "fr-FR"
+                        )
                       : "-"
                   }</td>
                   <td>${item.Commentaireutilisateur ?? "-"}</td>
@@ -223,31 +237,36 @@ export default function ReclamationListDataGrid({
         const actions = params.row.actionsCorrectives || [];
         return (
           <Stack direction="row" spacing={1}>
-         <Button
-  variant="contained"
-  size="small"
-  startIcon={<VisibilityIcon />}
-  onClick={() => handleViewActions(actions)}
-  sx={{
-    background: "linear-gradient(135deg, rgb(65, 132, 188) 30%, rgb(144, 74, 185) 90%)",
-    color: "#fff",
-    borderRadius: "8px",
-    boxShadow: "0 3px 5px 2px rgba(33, 203, 243, .3)",
-    textTransform: "none",
-    fontWeight: "bold",
-    transition: "all 0.3s ease-in-out",
-    transform: "scale(1)",
-    "&:hover": {
-      background: "linear-gradient(135deg, #1976D2 30%, #00ACC1 90%)",
-      transform: "scale(1.05)",
-      boxShadow: "0 6px 12px 3px rgba(0, 188, 212, 0.4)",
-    },
-  }}
->
-  Voir ({actions.length})
-</Button>
+            <Button
+              variant="contained"
+              size="small"
+              startIcon={<VisibilityIcon />}
+              onClick={() => handleViewActions(actions)}
+              sx={{
+                background:
+                  "linear-gradient(135deg, rgb(65, 132, 188) 30%, rgb(144, 74, 185) 90%)",
+                color: "#fff",
+                borderRadius: "8px",
+                boxShadow: "0 3px 5px 2px rgba(33, 203, 243, .3)",
+                textTransform: "none",
+                fontWeight: "bold",
+                transition: "all 0.3s ease-in-out",
+                transform: "scale(1)",
+                "&:hover": {
+                  background:
+                    "linear-gradient(135deg, #1976D2 30%, #00ACC1 90%)",
+                  transform: "scale(1.05)",
+                  boxShadow: "0 6px 12px 3px rgba(0, 188, 212, 0.4)",
+                },
+              }}
+            >
+              Voir ({actions.length})
+            </Button>
 
-            <ActionCorrectiveDialog id={params.row._id} />
+            <ActionCorrectiveDialog
+              id={params.row._id}
+              onResoudre={onResoudre}
+            />
           </Stack>
         );
       },
@@ -269,7 +288,44 @@ export default function ReclamationListDataGrid({
         ]
       : []),
   ];
-
+  const handleActionCorrectiveDelete = async (action: ActionCorrectiveType) => {
+    try {
+      if (!action) return;
+      //delete service
+      const response = await deleteActionCorrective(action._id as string);
+      setSelectedActions((actions) =>
+        actions.filter((actionCorr) => actionCorr._id !== action._id)
+      );
+      setActionCorrectives(
+        selectedReclamationId,
+        selectedActions.filter((actionCorr) => actionCorr._id !== action._id)
+      );
+    } catch (error) {}
+  };
+  const handleActionCorrectiveUpdate = async (
+    id: string,
+    action: ActionCorrectiveType
+  ) => {
+    try {
+      if (!action) return;
+      //delete service
+      const response = await updateActionCorrective(
+        action._id as string,
+        action
+      );
+      setSelectedActions((actions) =>
+        actions.map((actionCorr) =>
+          actionCorr._id == id ? action : actionCorr
+        )
+      );
+      setActionCorrectives(
+        selectedReclamationId,
+        selectedActions.map((actionCorr) =>
+          actionCorr._id == id ? action : actionCorr
+        )
+      );
+    } catch (error) {}
+  };
   return (
     <>
       <div
@@ -325,6 +381,7 @@ export default function ReclamationListDataGrid({
       <DataGrid
         rows={data}
         columns={columns}
+        onRowClick={(params) => setSelectedReclamationId(params.row._id)}
         getRowId={(row) => row._id!}
         autoHeight
         sx={{ mt: 2 }}
@@ -375,6 +432,16 @@ export default function ReclamationListDataGrid({
                         </>
                       }
                     />
+                    <ActionCorrectiveItemActions
+                      actionCorrective={action}
+                      onDelete={() => handleActionCorrectiveDelete(action)}
+                      onUpdate={(newAction: ActionCorrectiveType) => {
+                        handleActionCorrectiveUpdate(
+                          action._id as string,
+                          newAction
+                        );
+                      }}
+                    />
                   </ListItem>
                 ))
               ) : (
@@ -397,4 +464,3 @@ export default function ReclamationListDataGrid({
     </>
   );
 }
-

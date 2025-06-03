@@ -1,4 +1,5 @@
 import { typeUser, StatutReclamationType, RoleType } from "@/types";
+import { ActionCorrectiveType } from "../actionsCorrectives/types";
 
 export interface ReclamationType {
   _id: string;
@@ -11,7 +12,7 @@ export interface ReclamationType {
   statut: StatutReclamationType;
   utilisateur: typeUser;
   role?: RoleType;
-    actionsCorrectives?: string[]; // liste d’IDs d’actions
+    actionsCorrectives?: ActionCorrectiveType[]; // liste d’IDs d’actions
 
 }
 

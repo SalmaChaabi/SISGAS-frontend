@@ -8,24 +8,38 @@ import {
   Container,
   Paper,
   InputAdornment,
+  CircularProgress,
 } from "@mui/material";
 import EmailIcon from "@mui/icons-material/Email";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router";
+import { forgotPassword } from "../services/users/forgotPassword";
+
 
 export default function ResetPassword() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setMessage("");
+    setError("");
+    setLoading(true);
+
     try {
-      // Simuler succès
-      setMessage("Un email de réinitialisation a été envoyé à votre adresse.");
+      const responseMessage = await forgotPassword(email);
+      setMessage(responseMessage);
     } catch (err) {
-      setError("Une erreur est survenue. Veuillez réessayer plus tard.");
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Une erreur inconnue est survenue.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -89,6 +103,7 @@ export default function ResetPassword() {
                   </InputAdornment>
                 ),
               }}
+              required
             />
 
             {message && (
@@ -117,22 +132,21 @@ export default function ResetPassword() {
               type="submit"
               fullWidth
               variant="contained"
+              disabled={loading}
               sx={{
                 mt: 3,
                 py: 1.5,
                 fontWeight: "bold",
                 borderRadius: "12px",
                 textTransform: "none",
-                background:
-                  "linear-gradient(90deg, #1976d2 0%, #42a5f5 100%)",
+                background: "linear-gradient(90deg, #1976d2 0%, #42a5f5 100%)",
                 boxShadow: "0px 4px 10px rgba(25, 118, 210, 0.3)",
                 "&:hover": {
-                  background:
-                    "linear-gradient(90deg, #1565c0 0%, #1e88e5 100%)",
+                  background: "linear-gradient(90deg, #1565c0 0%, #1e88e5 100%)",
                 },
               }}
             >
-              Envoyer le lien
+              {loading ? <CircularProgress size={24} color="inherit" /> : "Envoyer le lien"}
             </Button>
           </Box>
         </Paper>
@@ -140,3 +154,4 @@ export default function ResetPassword() {
     </Box>
   );
 }
+

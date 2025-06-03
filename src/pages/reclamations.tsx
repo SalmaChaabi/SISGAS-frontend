@@ -27,6 +27,8 @@ import { useSession } from "../SessionContext";
 import { motion } from "framer-motion";
 import { SelectChangeEvent } from "@mui/material";
 import useUserRole from "../hooks/useUserRole";
+import createActionCorrective from "../services/actionsCorrectives/createActionCorrective";
+import { ActionCorrectiveType } from "../services/actionsCorrectives/types";
 
 // 🎯 Couleurs de statut
 const statusColors: Record<string, string> = {
@@ -48,25 +50,37 @@ function Reclamations() {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>("");
   const { session } = useSession();
-    const { isAdmin, isTechnicien, isComptable } = useUserRole();
-
-
+  const { isAdmin, isTechnicien, isComptable } = useUserRole();
+  const setActionsCorrectives = (
+    idReclamation: string,
+    actions: ActionCorrectiveType[]
+  ) => {
+    setReclamations((prevReclamations) =>
+      prevReclamations.map((reclamation) =>
+        reclamation._id == idReclamation
+          ? { ...reclamation, actionsCorrectives: actions }
+          : reclamation
+      )
+    );
+  };
   useEffect(() => {
     const fetchData = async () => {
       try {
         const data = await getAllReclamations();
         setReclamations(data);
       } catch (error) {
-        console.error("Erreur lors de la récupération des réclamations :", error);
+        console.error(
+          "Erreur lors de la récupération des réclamations :",
+          error
+        );
       }
     };
     fetchData();
   }, []);
-  
 
   const filteredReclamations = statusFilter
     ? reclamations.filter((r) =>
-      r.statut?.nom?.toLowerCase().includes(statusFilter.toLowerCase())
+        r.statut?.nom?.toLowerCase().includes(statusFilter.toLowerCase())
       )
     : reclamations;
 
@@ -86,7 +100,11 @@ function Reclamations() {
   ): Promise<{ success: boolean; message: string; data: any }> => {
     const userId = session?.user?.id;
     if (!userId) {
-      return { success: false, message: "Utilisateur non connecté", data: null };
+      return {
+        success: false,
+        message: "Utilisateur non connecté",
+        data: null,
+      };
     }
 
     try {
@@ -109,6 +127,60 @@ function Reclamations() {
           data: null,
         }
       );
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour :", error);
+      return {
+        success: false,
+        message: "Erreur serveur",
+        data: null,
+      };
+    }
+  };
+
+  const handleResoudre = async (
+    id: string,
+
+    actionCorrective: ActionCorrectiveType
+  ): Promise<{ success: boolean; message: string; data: any }> => {
+    const userId = session?.user?.id;
+    if (!userId) {
+      return {
+        success: false,
+        message: "Utilisateur non connecté",
+        data: null,
+      };
+    }
+
+    try {
+      const response = await createActionCorrective(
+        userId,
+        id,
+        actionCorrective
+      );
+
+      if (response?.success && response.data) {
+        const actionCorrectif = response.data as ActionCorrectiveType;
+        setReclamations((prev) =>
+          prev.map((item) =>
+            item._id === id
+              ? {
+                  ...item,
+                  actionsCorrectives: [
+                    //@ts-ignore
+                    ...item?.actionsCorrectives,
+                    actionCorrectif,
+                  ],
+                }
+              : item
+          )
+        );
+      }
+
+      return {
+        success: false,
+        message: "Réponse indéfinie",
+        data: null,
+      };
     } catch (error) {
       console.error("Erreur lors de la mise à jour :", error);
       return {
@@ -147,16 +219,32 @@ function Reclamations() {
 
   const statusCount = (status: string) =>
     reclamations.filter((r) => r.statut?.nom?.toLowerCase() === status).length;
-
+  console.log(filteredReclamations);
   return (
     <Box sx={{ p: 3 }}>
       {/* 🎨 Statistiques */}
       <Stack direction="row" spacing={2} mb={3} flexWrap="wrap">
         {[
-          { label: "Total Réclamations", count: reclamations.length, color: "#6a1b9a" },
-          { label: "Réclamations Résolues", count: statusCount("résolu"), color: "#4caf50" },
-          { label: "Réclamations Escaladée", count: statusCount("escaladée"), color: "#e53935" },
-          { label: "Réclamations Envoyée", count: statusCount("envoyée"), color: "#2196f3" },
+          {
+            label: "Total Réclamations",
+            count: reclamations.length,
+            color: "#6a1b9a",
+          },
+          {
+            label: "Réclamations Résolues",
+            count: statusCount("résolu"),
+            color: "#4caf50",
+          },
+          {
+            label: "Réclamations Escaladée",
+            count: statusCount("escaladée"),
+            color: "#e53935",
+          },
+          {
+            label: "Réclamations Envoyée",
+            count: statusCount("envoyée"),
+            color: "#2196f3",
+          },
         ].map((item, index) => (
           <motion.div
             key={item.label}
@@ -185,70 +273,76 @@ function Reclamations() {
       <Box sx={{ display: "flex", justifyContent: "flex-start", mb: 3 }}>
         <FormControl sx={{ minWidth: 250 }}>
           <InputLabel>Filtrer par statut</InputLabel>
-          <Select value={statusFilter} label="Filtrer par statut" onChange={handleFilterChange}>
+          <Select
+            value={statusFilter}
+            label="Filtrer par statut"
+            onChange={handleFilterChange}
+          >
             <MenuItem value="">Tous</MenuItem>
             <MenuItem value="résolu">Résolu</MenuItem>
             <MenuItem value="escaladée">Escaladée</MenuItem>
             <MenuItem value="envoyée">Envoyée</MenuItem>
-
           </Select>
         </FormControl>
       </Box>
 
       {/* 🔘 Bouton Créer Réclamation */}
 
-{(isAdmin || isTechnicien || isComptable) && (
-  <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 3 }}>
-    <Button
-      variant="contained"
-      onClick={() => setOpenFormModal(true)}
-      startIcon={
-        <ReportProblemIcon
-          sx={{
-            fontSize: "24px",
-            animation: "bounce 1.5s infinite",
-            "@keyframes bounce": {
-              "0%, 100%": {
-                transform: "translateY(0)",
-                animationTimingFunction: "cubic-bezier(0.8, 0, 1, 1)",
+      {(isAdmin || isTechnicien || isComptable) && (
+        <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 3 }}>
+          <Button
+            variant="contained"
+            onClick={() => setOpenFormModal(true)}
+            startIcon={
+              <ReportProblemIcon
+                sx={{
+                  fontSize: "24px",
+                  animation: "bounce 1.5s infinite",
+                  "@keyframes bounce": {
+                    "0%, 100%": {
+                      transform: "translateY(0)",
+                      animationTimingFunction: "cubic-bezier(0.8, 0, 1, 1)",
+                    },
+                    "50%": {
+                      transform: "translateY(-5px)",
+                      animationTimingFunction: "cubic-bezier(0, 0, 0.2, 1)",
+                    },
+                  },
+                }}
+              />
+            }
+            sx={{
+              background:
+                "linear-gradient(45deg, #e53935 0%, #d32f2f 50%, #c2185b 100%)",
+              color: "white",
+              padding: "12px 24px",
+              fontSize: "16px",
+              fontWeight: "600",
+              borderRadius: "50px",
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+              "&:hover": {
+                background:
+                  "linear-gradient(45deg, #f44336 0%, #1976d2 50%, #388e3c 100%)",
+                boxShadow: "0 6px 12px rgba(0, 0, 0, 0.3)",
+                transform: "scale(1.05)",
               },
-              "50%": {
-                transform: "translateY(-5px)",
-                animationTimingFunction: "cubic-bezier(0, 0, 0.2, 1)",
+              "&:active": {
+                transform: "scale(0.98)",
               },
-            },
-          }}
-        />
-      }
-      sx={{
-        background: "linear-gradient(45deg, #e53935 0%, #d32f2f 50%, #c2185b 100%)",
-        color: "white",
-        padding: "12px 24px",
-        fontSize: "16px",
-        fontWeight: "600",
-        borderRadius: "50px",
-        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-        "&:hover": {
-          background: "linear-gradient(45deg, #f44336 0%, #1976d2 50%, #388e3c 100%)",
-          boxShadow: "0 6px 12px rgba(0, 0, 0, 0.3)",
-          transform: "scale(1.05)",
-        },
-        "&:active": {
-          transform: "scale(0.98)",
-        },
-      }}
-    >
-      Créer Réclamation
-    </Button>
-  </Box>
-)}
-
+            }}
+          >
+            Créer Réclamation
+          </Button>
+        </Box>
+      )}
 
       {/* 📋 Liste des réclamations */}
       <ReclamationListDataGrid
         data={filteredReclamations}
+        setActionCorrectives={setActionsCorrectives}
         onDelete={handleDelete}
         onUpdate={handleUpdate}
+        onResoudre={handleResoudre}
         getStatusIcon={getStatusIcon}
       />
 
@@ -264,7 +358,11 @@ function Reclamations() {
       </Dialog>
 
       {/* ✅ Snackbar */}
-      <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={() => setOpenSnackbar(false)}>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={3000}
+        onClose={() => setOpenSnackbar(false)}
+      >
         <Alert onClose={() => setOpenSnackbar(false)} severity="success">
           Réclamation ajoutée avec succès !
         </Alert>
@@ -279,7 +377,9 @@ function Reclamations() {
           {Object.entries(statusColors).map(([status, color]) => (
             <Box key={status} display="flex" alignItems="center">
               <Circle sx={{ color, mr: 1 }} />
-              <Typography>{status.charAt(0).toUpperCase() + status.slice(1)}</Typography>
+              <Typography>
+                {status.charAt(0).toUpperCase() + status.slice(1)}
+              </Typography>
             </Box>
           ))}
         </Stack>
@@ -289,18 +389,3 @@ function Reclamations() {
 }
 
 export default Reclamations;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
